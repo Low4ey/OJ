@@ -3,6 +3,7 @@ const config = require("./src/config/config");
 const bodyParser = require("body-parser");
 const dbConnect = require("./src/service/db");
 const errorMiddleware = require("./src/middleware/error");
+const cors = require("cors");
 
 const connectApp = async () => {
 	const app = express();
