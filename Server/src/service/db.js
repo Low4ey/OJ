@@ -1,6 +1,6 @@
 const mongoose=require("mongoose")
 const config = require("../config/config");
-async function dbConnect(){
+const dbConnect=async ()=>{
     try {
         await mongoose.connect(config.DB);
       } catch (error) {
