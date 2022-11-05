@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const dbConnect = require("./src/service/db");
 const errorMiddleware = require("./src/middleware/error");
 const cors = require("cors");
-
+const userRoute = require("./src/routes/userRoutes")
 const connectApp = async () => {
 	const app = express();
 	//adding CORS
@@ -28,6 +28,9 @@ const connectApp = async () => {
 			credentials: true,
 		})
 	);
+	//Routes
+	app.use("/user", userRoute)
+
 	//middleware
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(express.json());
