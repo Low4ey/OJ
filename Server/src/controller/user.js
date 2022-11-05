@@ -1,76 +1,83 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
 
-
 //Create User
-exports.createUser = async (req,res,next)=>{
+const createUser = async ({
+  userName,
+  firstName,
+  lastName,
+  userEmail,
+  userPhone,
+  userCountry,
+  userPassword,
+  userRole,
+  userInstitute,
+}) => {
+  const user = await User.create({
+    userName,
+    firstName,
+    lastName,
+    userEmail,
+    userPhone,
+    userCountry,
+    userPassword,
+    userRole,
+    userInstitute,
+  });
 
-    try {
-        const user = await User.create(req.body)
+  return user;
+};
 
-        res.status(201).json({
-            success:true,
-            user
-        })
-        
-    } catch (error) {
-        next(error);
-    }
+//Update User by ID
 
+const updateUser = async ({id,
+  userName,
+  firstName,
+  lastName,
+  userEmail,
+  userPhone,
+  userCountry,
+  userPassword,
+  userRole,
+  userInstitute,
+}) => {
 
-}
-
-//Update User by ID 
-
-exports.updateUser = async (req,res,next) =>{
-
-    let user = await User.findById(req.params.id);
-
-    if(!user)
+  const user = await User.findOneAndUpdate(
+    {_id:id},
     {
-        return res.status(500).json({
-            success: false,
-            message: "No such User"
-        })
+      userName,
+      firstName,
+      lastName,
+      userEmail,
+      userPhone,
+      userCountry,
+      userPassword,
+      userRole,
+      userInstitute,
+    },{
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
     }
+  );
 
-    user = await User.findByIdAndUpdate(req.params.id, req.body, {new:true, runValidators: true, useFindAndModify: false})
-
+  return user;
 }
 
-//Delete User by ID 
+//Delete User by ID
 
-exports.updateUser = async (req,res,next) =>{
+const deleteUser = async ({id}) => {
 
-    let user = await User.findById(req.params.id);
+    const user= await User.findById({_id:id})
 
-    if(!user)
-    {
-        return res.status(500).json({
-            success: false,
-            message: "No such User"
-        })
-    }
+    await user.remove();
+};
 
-    user = await User.findByIdAndDelete(req.params.id, req.body, {new:true, runValidators: true, useFindAndModify: false})
+//Get User Data
 
-    res.status(200).json({
-        success: true,
-        user
-    })
-    
-}
+const getUserData = async () => {
+  const allUsers = await User.find();
+    return allUsers;
+};
 
-//Get User Data 
-
-exports.getUserData = async (req,res)=>{
-
-    const allUsers = await User.find(); 
-
-    res.status(200).json(
-        {
-            success:true,
-            allUsers
-        }
-    )
-}
+module.exports = { getUserData, createUser, updateUser, deleteUser};
