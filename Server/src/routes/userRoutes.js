@@ -1,12 +1,55 @@
 const express = require("express")
-
-const {createUser, getUserData, updateUser} = require("../controller/user")
+const ErrorHandler = require("../utils/errorHandler");
+const userController = require("../controller/user");
+const { find } = require("../models/user");
 
 const router = express.Router();
 
-router.route("/user").get(getUserData);
-router.route("/user/new").post(createUser);
-router.route("/user/:id").post(updateUser);
+
+router.post("/newUser" , async(req,res,next)=>{
+
+    try {
+        const result = await userController.createUser(req.body);
+        res.json(result);
+
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+})
+
+router.put("/updateUser/:id" , async(req,res,next)=>{
+
+    try {
+        const result = await userController.updateUser({id:req.params['id'], ...req.body});
+        res.json(result);
+
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+})
+
+router.delete("/deleteUser/:id" , async(req,res,next)=>{
+
+    try {
+        const result = await userController.deleteUser({id:req.params['id']});
+        res.json(result);
+
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+})
+
+router.get("/getUser" , async(req,res,next)=>{
+
+    try {
+        const result = await userController.getUserData();
+        res.json(result);
+
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+})
+
 
 
 
