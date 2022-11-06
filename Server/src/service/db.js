@@ -1,12 +1,12 @@
-const mongoose=require("mongoose")
+const mongoose = require("mongoose");
 const config = require("../config/config");
-const dbConnect=async ()=>{
+const dbConnect = async () => {
     try {
         await mongoose.connect(config.DB);
-      } catch (error) {
+    } catch (error) {
         console.log(error);
-      }
-}
-module.exports={
-    dbConnect
-}
+    }
+};
+module.exports = {
+    dbConnect,
+};

@@ -1,53 +1,49 @@
-const express = require("express")
+const express = require("express");
 const ErrorHandler = require("../utils/errorHandler");
 const userController = require("../controller/user");
 const { find } = require("../models/user");
 
 const router = express.Router();
 
-
-router.post("/newUser" , async(req,res,next)=>{
-
+router.post("/newUser", async (req, res, next) => {
     try {
         const result = await userController.createUser(req.body);
         res.json(result);
-
     } catch (error) {
-        next(new ErrorHandler(error))
+        next(new ErrorHandler(error));
     }
-})
+});
 
-router.put("/updateUser/:id" , async(req,res,next)=>{
-
+router.put("/updateUser/:id", async (req, res, next) => {
     try {
-        const result = await userController.updateUser({id:req.params['id'], ...req.body});
+        const result = await userController.updateUser({
+            id: req.params["id"],
+            ...req.body,
+        });
         res.json(result);
-
     } catch (error) {
-        next(new ErrorHandler(error))
+        next(new ErrorHandler(error));
     }
-})
+});
 
-router.delete("/deleteUser/:id" , async(req,res,next)=>{
-
+router.delete("/deleteUser/:id", async (req, res, next) => {
     try {
-        const result = await userController.deleteUser({id:req.params['id']});
+        const result = await userController.deleteUser({
+            id: req.params["id"],
+        });
         res.json(result);
-
     } catch (error) {
-        next(new ErrorHandler(error))
+        next(new ErrorHandler(error));
     }
-})
+});
 
-router.get("/getUser" , async(req,res,next)=>{
-
+router.get("/getUser", async (req, res, next) => {
     try {
         const result = await userController.getUserData();
         res.json(result);
-
     } catch (error) {
-        next(new ErrorHandler(error))
+        next(new ErrorHandler(error));
     }
-})
+});
 
-module.exports = router; 
+module.exports = router;

@@ -3,52 +3,50 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
     {
-        userName:{
+        userName: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
-        firstName:{
+        firstName: {
             type: String,
             required: true,
-            
         },
-        lastName:{
+        lastName: {
             type: String,
             required: true,
-            
         },
-        userEmail:{
+        userEmail: {
             type: String,
             required: true,
             lowercase: true,
             unique: true,
         },
-        userPhone:{
+        userPhone: {
             type: Number,
             required: true,
-            unique: true
+            unique: true,
         },
-        userCountry:{
+        userCountry: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
-        userPassword:{
+        userPassword: {
             type: String,
             required: true,
             trim: true,
-            minlength: 8
+            minlength: 8,
         },
-        userRole:{
+        userRole: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
-        userInstitute:{
+        userInstitute: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
     },
     {
@@ -56,7 +54,5 @@ const userSchema = new Schema(
     }
 );
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 module.exports = User;
-
-
