@@ -6,7 +6,7 @@ const userSchema = new Schema(
         userName:{
             type: String,
             required: true,
-            unique: true
+            unique: true,
         },
         firstName:{
             type: String,
@@ -27,28 +27,26 @@ const userSchema = new Schema(
         userPhone:{
             type: Number,
             required: true,
-            unique: true
+            unique: true,
         },
         userCountry:{
             type: String,
-            required: true,
-            unique: true
+            required: false,
         },
         userPassword:{
             type: String,
             required: true,
             trim: true,
-            minlength: 8
+            minlength: 8,
+            unique: false
         },
         userRole:{
             type: String,
-            required: true,
-            unique: true
+            required: false,
         },
         userInstitute:{
             type: String,
-            required: true,
-            unique: true
+            required: false,
         },
     },
     {

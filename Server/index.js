@@ -7,6 +7,7 @@ const cors = require("cors");
 const userRoute = require("./src/routes/userRoutes")
 const connectApp = async () => {
 	const app = express();
+	app.use(express.json());
 	//adding CORS
 	const allowedOrigins = ["http://localhost:3000"];
 	app.use(
@@ -33,9 +34,7 @@ const connectApp = async () => {
 
 	//middleware
 	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(express.json());
 	app.use(errorMiddleware);
-	app.use(express.json());
 	//database connection
 	try {
 		await dbConnect.dbConnect();

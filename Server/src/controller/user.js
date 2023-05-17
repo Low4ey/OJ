@@ -13,6 +13,7 @@ const createUser = async ({
   userRole,
   userInstitute,
 }) => {
+  console.log("Hello");
   const user = await User.create({
     userName,
     firstName,
