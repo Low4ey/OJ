@@ -1,11 +1,11 @@
 const express = require("express")
 const ErrorHandler = require("../utils/errorHandler");
-const userController = require("../controller/user");
-// const authUser = require("../middleware/authUser");
+const {userController} = require("../controller");
 const bcrypt = require("bcrypt");
 const generateTokens = require("../utils/generateTokens");
 
-// const { find } = require("../models/user");
+
+
 
 const router = express.Router();
 

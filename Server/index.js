@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const dbConnect = require("./src/service/db");
 const errorMiddleware = require("./src/middleware/error");
 const cors = require("cors");
-const userRoute = require("./src/routes/userRoutes")
+const {userRouter}=require("./src/routes")
 const connectApp = async () => {
 	const app = express();
 	app.use(express.json());
@@ -13,7 +13,6 @@ const connectApp = async () => {
 	app.use(
 		cors({
 			origin: function (origin, callback) {
-				// allow requests with no origin (like mobile apps or curl requests)
 				if (!origin) return callback(null, true);
 				// allow whitelisted origins
 				if (allowedOrigins.indexOf(origin) === -1)
@@ -46,6 +45,8 @@ const connectApp = async () => {
 	process.on("uncaughtException", (err) => {
 		console.log(`Error: ${err.message}`);
 		console.log(`Shutting down the server due to Uncaught Exception`);
+	app.use("/user", userRouter)
+
 
 		process.exit(1);
 	});

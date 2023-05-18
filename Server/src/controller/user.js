@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = require("../models/user");
+const {User} = require("../models");
 const config = require("../config/config");
 const bcrypt = require("bcrypt");
 // const UserToken = require("../models/userToken");
