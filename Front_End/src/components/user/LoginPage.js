@@ -1,35 +1,58 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+// import './LoginPage.css';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    userEmail: '',
+    userPassword: '',
+  });
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Perform login logic using email and password
+    try {
+      // Send a POST request to the backend API for user authentication
+      const response = await axios.post('http://localhost:5005/user/login', formData);
+
+      // Handle the response from the server
+      console.log(response.data); // Assuming the server returns some data
+
+      // TODO: Handle success or navigate to a different page
+    } catch (error) {
+      // Handle error responses from the server
+      console.error('Login failed:', error.message);
+      // TODO: Handle error or show error message to the user
+    }
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={handleEmailChange} />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" value={password} onChange={handlePasswordChange} />
-        </div>
-        <button type="submit">Login</button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          name="userEmail"
+          placeholder="Email"
+          value={formData.userEmail}
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          name="userPassword"
+          placeholder="Password"
+          value={formData.userPassword}
+          onChange={handleChange}
+        />
+        <button type="submit">Log In</button>
       </form>
     </div>
   );

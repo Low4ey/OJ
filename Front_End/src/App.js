@@ -5,8 +5,8 @@ import SignupPage from './components/user/SignupPage';
 const App = () => {
   return (
     <div>
-      {/* <LoginPage /> */}
-      <SignupPage />
+      <LoginPage />
+      {/* <SignupPage /> */}
     </div>
   );
 };

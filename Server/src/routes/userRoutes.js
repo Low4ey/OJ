@@ -1,14 +1,19 @@
 const express = require("express")
 const ErrorHandler = require("../utils/errorHandler");
 const userController = require("../controller/user");
-const { find } = require("../models/user");
+// const authUser = require("../middleware/authUser");
+const bcrypt = require("bcrypt");
+const generateTokens = require("../utils/generateTokens");
+
+// const { find } = require("../models/user");
 
 const router = express.Router();
 
 
-router.post("/newUser" , async(req,res,next)=>{
+router.post("/signup" , async(req,res,next)=>{
 
     try {
+
         const result = await userController.createUser(req.body);
         res.json(result);
 
@@ -16,6 +21,31 @@ router.post("/newUser" , async(req,res,next)=>{
         next(new ErrorHandler(error))
     }
 })
+
+router.post("/login",async(req,res,next)=>{
+    try{
+        
+        const currentUser = await userController.getUserByEmail(req.body);
+        
+        if(!currentUser)
+            return res.status(401).json({error:true, message:"Email Incorrect"});
+        const verifyPassword =  await bcrypt.compare(req.body.userPassword , currentUser.userPassword );
+        if(!verifyPassword)
+            return res.status(401).json({error:true, message:"Password Incorrect"});
+        
+        const {accessToken , refreshToken} = await generateTokens(currentUser);
+        res.status(200).json({
+            error:false,
+            accessToken,
+            refreshToken,
+            message:"Logged In"
+        })
+
+    }catch(error){
+        next(new ErrorHandler(error));
+    }
+})
+
 
 router.put("/updateUser/:id" , async(req,res,next)=>{
 
@@ -42,7 +72,7 @@ router.delete("/deleteUser/:id" , async(req,res,next)=>{
 router.get("/getUser" , async(req,res,next)=>{
 
     try {
-        const result = await userController.getUserData();
+        const result = await userController.getAllUserData();
         res.json(result);
 
     } catch (error) {

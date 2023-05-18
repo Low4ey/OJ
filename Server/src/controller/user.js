@@ -1,5 +1,24 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
+const config = require("../config/config");
+const bcrypt = require("bcrypt");
+// const UserToken = require("../models/userToken");
+
+
+const getUserByEmail = async({
+  userEmail,
+}) => {
+  try {
+      const user = await User.findOne({userEmail : userEmail})
+      // console.log(user,userEmail);
+      if(user)
+          return user; 
+  } catch (error) {
+      console.log(error);
+  }
+}
+
+
 
 //Create User
 const createUser = async ({
@@ -13,7 +32,14 @@ const createUser = async ({
   userRole,
   userInstitute,
 }) => {
-  console.log("Hello");
+  // bcrypt.genSalt(10,function(err, salt){
+  //   bcrypt.hash(userPassword , config.SALT,function(err, hash) {
+  //     hashPassword=hash;
+  //   });
+  // });
+  const salt = await bcrypt.genSalt(Number(config.SALT));
+  const hashPassword = await bcrypt.hash(userPassword , salt);
+  // console.log(hashPassword);
   const user = await User.create({
     userName,
     firstName,
@@ -21,7 +47,7 @@ const createUser = async ({
     userEmail,
     userPhone,
     userCountry,
-    userPassword,
+    userPassword:hashPassword,
     userRole,
     userInstitute,
   });
@@ -76,9 +102,9 @@ const deleteUser = async ({id}) => {
 
 //Get User Data
 
-const getUserData = async () => {
+const getAllUserData = async () => {
   const allUsers = await User.find();
     return allUsers;
 };
 
-module.exports = { getUserData, createUser, updateUser, deleteUser};
+module.exports = { getAllUserData, createUser, updateUser, deleteUser , getUserByEmail};

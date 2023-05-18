@@ -28,7 +28,7 @@ const SignupPage = () => {
 
     try {
       // Send a POST request to the backend API
-      const response = await axios.post('http://localhost:5005/user/newUser', formData);
+      const response = await axios.post('http://localhost:5005/user/signup', formData);
 
       // Handle the response from the server
       console.log(response.data); // Assuming the server returns some data
