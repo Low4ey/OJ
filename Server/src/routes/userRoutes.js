@@ -1,6 +1,7 @@
 const express = require("express")
 const ErrorHandler = require("../utils/errorHandler");
-const userController = require("../controller/user");
+
+const {userController} = require("../controller");
 const { find } = require("../models/user");
 
 const router = express.Router();
