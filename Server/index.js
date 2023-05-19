@@ -1,24 +1,24 @@
 const express = require("express");
 const config = require("./src/config/config");
 const bodyParser = require("body-parser");
-const { dbConnect, corsConnect } = require("./src/service");
+const {dbConnect,corsConnect} = require("./src/service");
 const errorMiddleware = require("./src/middleware/error");
-const { userRouter } = require("./src/routes")
-const { handleUnhandledRejection, handleUncaughtException } = require("./src/utils")
+const {userRouter}=require("./src/routes")
+const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
 const connectApp = async () => {
 	const app = express();
 	app.use(express.json());
-	//middleware
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(errorMiddleware);
 	//adding CORS
-	app.use(corsConnect.corsConnect())
+	app.use(corsConnect.corsConnect());
 	//Routes
 	app.use("/user", userRouter)
 
+	//middleware
 	//database connection
 	try {
-		await dbConnect;
+		await dbConnect.dbConnect();
 		console.log("Database Connected");
 	} catch (error) {
 		console.log(error);
@@ -27,12 +27,13 @@ const connectApp = async () => {
 	app.listen(config.PORT, () => {
 		console.log(`Server running on port ${config.PORT}`);
 	});
-	// Error Handlers
+	//? Handling Uncaught Exceptions
 	process.on("uncaughtException", (err) => {
-		handleUncaughtException(err);
+		handleUncaughtException(err)
 	});
+	//? Unhandled Promise Rejection
 	process.on("unhandledRejection", (err) => {
-		handleUnhandledRejection(err);
+		handleUncaughtRejection(err)
 	});
 };
 
