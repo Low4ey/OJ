@@ -1,4 +1,4 @@
-const ErrorHandler = require("../utils/errorHandler");
+const {ErrorHandler} = require("../utils");
 
 //Errors:
 module.exports = (err, req, res, next) => {

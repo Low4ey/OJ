@@ -1,4 +1,4 @@
-const UserToken = require("../models/userToken");
+const {UserToken} = require("../models");
 const mongoose = require("mongoose");
 
 const createUserToken = async ({

@@ -32,11 +32,6 @@ const createUser = async ({
   userRole,
   userInstitute,
 }) => {
-  // bcrypt.genSalt(10,function(err, salt){
-  //   bcrypt.hash(userPassword , config.SALT,function(err, hash) {
-  //     hashPassword=hash;
-  //   });
-  // });
   const salt = await bcrypt.genSalt(Number(config.SALT));
   const hashPassword = await bcrypt.hash(userPassword , salt);
   // console.log(hashPassword);
