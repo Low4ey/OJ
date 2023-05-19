@@ -5,6 +5,8 @@ const dbConnect = require("./src/service/db");
 const errorMiddleware = require("./src/middleware/error");
 const cors = require("cors");
 const {userRouter}=require("./src/routes")
+const {tokenRouter}=require("./src/routes")
+
 const connectApp = async () => {
 	const app = express();
 	app.use(express.json());
@@ -29,7 +31,9 @@ const connectApp = async () => {
 		})
 	);
 	//Routes
-	app.use("/user", userRoute)
+	app.use("/user", userRouter)
+
+	app.use("/api", tokenRouter)
 
 	//middleware
 	app.use(bodyParser.urlencoded({ extended: true }));
