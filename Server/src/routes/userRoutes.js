@@ -1,14 +1,8 @@
 const express = require("express")
-const ErrorHandler = require("../utils/errorHandler");
 const {userController} = require("../controller");
 const bcrypt = require("bcrypt");
-const generateTokens = require("../utils/generateTokens");
-
-
-
-
+const {generateTokens,ErrorHandler} = require("../utils");
 const router = express.Router();
-
 
 router.post("/signup" , async(req,res,next)=>{
 
