@@ -15,8 +15,8 @@ const problemSchema = new Schema(
             required:true,
         },
         createdBy:{
-            type:String,//userID
-            unique:true
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
         },
         tags:{
             type:String//tag id
@@ -24,8 +24,11 @@ const problemSchema = new Schema(
         difficulty:{
             type:String,
             required:true,
+        },
+        approved:{
+            type:Boolean,
+            default:false,
         }
-
     },
     {
         timestamp: true,
