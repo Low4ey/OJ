@@ -19,7 +19,6 @@ const generateTokens = async(user) =>{
         )
 
         const userToken = await UserToken.findOne({userId: user._id});
-        console.log(userToken);
         if(userToken) await userToken.remove();
         
         await userTokenController.createUserToken({userId:user._id , token:refreshToken});
