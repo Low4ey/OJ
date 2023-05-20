@@ -2,11 +2,12 @@ const express = require("express");
 const config = require("./src/config/config");
 const bodyParser = require("body-parser");
 const {dbConnect,corsConnect} = require("./src/service");
-const errorMiddleware = require("./src/middleware/error");
+const {errorMiddleware} = require("./src/middleware");
 const {userRouter}=require("./src/routes")
 const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
 const connectApp = async () => {
 	const app = express();
+	//middleware
 	app.use(express.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(errorMiddleware);
@@ -14,8 +15,6 @@ const connectApp = async () => {
 	app.use(corsConnect.corsConnect());
 	//Routes
 	app.use("/user", userRouter)
-
-	//middleware
 	//database connection
 	try {
 		await dbConnect.dbConnect();
