@@ -1,7 +1,7 @@
 const express = require("express")
 const {userController} = require("../controller");
 const bcrypt = require("bcrypt");
-const {generateTokens,ErrorHandler} = require("../utils");
+const {generateToken,ErrorHandler} = require("../utils");
 const router = express.Router();
 
 router.post("/signup" , async(req,res,next)=>{
@@ -27,7 +27,7 @@ router.post("/login",async(req,res,next)=>{
         if(!verifyPassword)
             return res.status(401).json({error:true, message:"Password Incorrect"});
         
-        const {accessToken , refreshToken} = await generateTokens(currentUser);
+        const {accessToken , refreshToken} = await generateToken(currentUser);
         res.status(200).json({
             error:false,
             accessToken,

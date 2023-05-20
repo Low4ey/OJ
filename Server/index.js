@@ -3,7 +3,7 @@ const config = require("./src/config/config");
 const bodyParser = require("body-parser");
 const {dbConnect,corsConnect} = require("./src/service");
 const {errorMiddleware} = require("./src/middleware");
-const {userRouter}=require("./src/routes")
+const {userRouter, tokenRouter}=require("./src/routes")
 const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
 const connectApp = async () => {
 	const app = express();
@@ -15,6 +15,7 @@ const connectApp = async () => {
 	app.use(corsConnect.corsConnect());
 	//Routes
 	app.use("/user", userRouter)
+	app.use("/api",tokenRouter);
 	//database connection
 	try {
 		await dbConnect.dbConnect();
@@ -27,13 +28,13 @@ const connectApp = async () => {
 		console.log(`Server running on port ${config.PORT}`);
 	});
 	//? Handling Uncaught Exceptions
-	process.on("uncaughtException", (err) => {
-		handleUncaughtException(err)
-	});
-	//? Unhandled Promise Rejection
-	process.on("unhandledRejection", (err) => {
-		handleUncaughtRejection(err)
-	});
+	// process.on("uncaughtException", (err) => {
+	// 	handleUncaughtException(err)
+	// });
+	// //? Unhandled Promise Rejection
+	// process.on("unhandledRejection", (err) => {
+	// 	handleUncaughtRejection(err)
+	// });
 };
 
 connectApp();

@@ -1,10 +1,10 @@
-const errorHandler=require("./errorHandler");
+const ErrorHandler=require("./errorHandler");
 const generateToken=require("./generateTokens");
 const handleUncaughtException =require("./handleUncaughtException");
 const handleUnhandledRejection =require("./handleUnhandledRejection");
 
 module.exports={
-    errorHandler,
+    ErrorHandler,
     generateToken,
     handleUncaughtException,
     handleUnhandledRejection

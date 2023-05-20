@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UserToken = require("../models/userToken");
 const config = require("../config/config");
-const userTokenController = require("../controller/userToken");
+const {userTokenController} = require("../controller");
 
 
 const generateTokens = async(user) =>{
@@ -19,7 +19,7 @@ const generateTokens = async(user) =>{
         )
 
         const userToken = await UserToken.findOne({userId: user._id});
-        
+        console.log(userToken);
         if(userToken) await userToken.remove();
         
         await userTokenController.createUserToken({userId:user._id , token:refreshToken});
