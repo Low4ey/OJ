@@ -3,7 +3,6 @@ const { User } = require("../models");
 const config = require("../config/config");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
-// const UserToken = require("../models/userToken");
 
 
 const getUserByEmail = async ({
