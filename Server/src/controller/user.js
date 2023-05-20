@@ -32,7 +32,7 @@ const createUser = async ({
   userRole,
   userInstitute,
 }) => {
-  const salt = await bcrypt.genSalt(Number(config.SALT));
+  const salt = await bcrypt.genSalt(Number(config.SALT)); // auto salt is bad so fix salt in env file..
   const hashPassword = await bcrypt.hash(userPassword , salt);
   // console.log(hashPassword);
   const user = await User.create({
