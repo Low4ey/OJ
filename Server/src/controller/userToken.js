@@ -1,17 +1,16 @@
 const {UserToken} = require("../models");
-const mongoose = require("mongoose");
 
 const createUserToken = async ({
     userId,
     token
 }) => {
-    const userToken = await UserToken.create(
+    const resultToken = await UserToken.create(
         {
             userId,
             token,
         }
     )
-    return userToken;
+    return resultToken;
 }
 
 module.exports = {createUserToken};

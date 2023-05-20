@@ -1,10 +1,14 @@
 const User=require("./user");
-const userToken=require("./userToken");
+const UserToken=require("./userToken");
 const Problem=require("./problem");
+const TestCase=require("./testCase");
+const Editorial=require("./editorial");
 
 
 module.exports={
     User,
-    userToken,
+    UserToken,
     Problem,
+    TestCase,
+    Editorial,
 }
