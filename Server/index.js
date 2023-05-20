@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const {dbConnect,corsConnect} = require("./src/service");
 const {errorMiddleware} = require("./src/middleware");
 const {userRouter, tokenRouter}=require("./src/routes")
-const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
+// const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
 const connectApp = async () => {
 	const app = express();
 	//middleware
