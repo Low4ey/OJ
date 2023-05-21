@@ -5,7 +5,18 @@ const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
 
 
-const getUserByEmail = async ({
+const getUserByEmail = async({
+  userEmail,
+}) => {
+  try {
+    const user = await User.findOne({userEmail : userEmail})
+    if(user) return user
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const loginUser = async ({
   userEmail,
   userPassword
 }) => {
@@ -110,4 +121,4 @@ const getAllUserData = async () => {
   return allUsers;
 };
 
-module.exports = { getAllUserData, createUser, updateUser, deleteUser, getUserByEmail };
+module.exports = { getAllUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
