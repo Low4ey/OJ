@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RichTextEditor from '../components/richText/richText';
+import RichTextEditor from '../../components/richText/richText';
 import './problem.css';
 
 const EditorPage = () => {

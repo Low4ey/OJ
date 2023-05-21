@@ -5,7 +5,7 @@ import './index.css';
 import App from './App';
 import LoginPage from './components/user/LoginPage';
 import SignupPage from './components/user/SignupPage';
-import EditorPage from './pages/problem';
+import EditorPage from './pages/AddProblem/problem';
 
 ReactDOM.render(
   <React.StrictMode>
