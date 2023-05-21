@@ -15,41 +15,41 @@ router.post("/createProblem" , async(req,res,next)=>{
     }
 })
 
-router.put("/updateProblem/:id" , async(req,res,next)=>{
+// router.put("/updateProblem/:id" , async(req,res,next)=>{
 
-    try {
-        const result = await problemController.updateProblem({id:req.params['id'], ...req.body});
-        res.json(result);
+//     try {
+//         const result = await problemController.updateProblem({id:req.params['id'], ...req.body});
+//         res.json(result);
 
-    } catch (error) {
-        next(new ErrorHandler(error))
-    }
-})
+//     } catch (error) {
+//         next(new ErrorHandler(error))
+//     }
+// })
 
-router.delete("/deleteProblem/:id" , async(req,res,next)=>{
+// router.delete("/deleteProblem/:id" , async(req,res,next)=>{
 
-    try {
-        const result = await problemController.deleteProblem({id:req.params['id']});
-        res.json(result);
+//     try {
+//         const result = await problemController.deleteProblem({id:req.params['id']});
+//         res.json(result);
 
-    } catch (error) {
-        next(new ErrorHandler(error))
-    }
-})
+//     } catch (error) {
+//         next(new ErrorHandler(error))
+//     }
+// })
 
 router.get("/getProblem" , async(req,res,next)=>{
 
     try {
-        const result = await problemController.getProblem(req.body);
+        const result = await problemController.getProblem(req.query);
         res.json(result);
 
     } catch (error) {
         next(new ErrorHandler(error))
     }
 })
-router.post("./approveProblem",async(req,res,next)=>{
+router.put("/approveProblem/:id",async(req,res,next)=>{
     try{
-        const result=await problemController.approveProblem(req.body);
+        const result=await problemController.approveProblem({problemId:req.params['id']});
         res.json(result);
     }catch (error) {
         next(new ErrorHandler(error))

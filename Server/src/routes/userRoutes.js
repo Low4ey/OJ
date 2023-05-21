@@ -19,7 +19,7 @@ router.post("/signup" , async(req,res,next)=>{
 router.post("/login",async(req,res,next)=>{
     try{
         
-        const result = await userController.getUserByEmail(req.body);
+        const result = await userController.loginUser(req.body);
         res.json(result);
 
     }catch(error){
