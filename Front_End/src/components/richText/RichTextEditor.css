@@ -1,0 +1,37 @@
+/* RichTextEditor.css */
+
+.editor-container {
+    height: 300px;
+  }
+  
+  .ql-editor {
+    min-height: 200px;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: #fff;
+    padding: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .ql-editor.ql-blank:focus::before {
+    color: #999;
+  }
+  
+  .ql-editor .ql-placeholder {
+    color: #999;
+  }
+  
+  .ql-editor[contenteditable="false"] {
+    background-color: #f7f7f7;
+    color: #999;
+  }
+  
+  .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    background-color: #f7f7f7;
+    padding: 8px;
+  }
+  
