@@ -1,5 +1,5 @@
 const config = require("../config/config");
-const { Problem, User } = require("../models");
+const { Problem } = require("../models");
 
 const createProblem = async ({
 	title,
@@ -7,11 +7,7 @@ const createProblem = async ({
 	tags,
 	difficulty,
 	approved,
-	userEmail,
 }) => {
-	const user = await User.findOne({ userEmail: userEmail });
-	if (!user) throw new Error("Incorrect UserEmail");
-
 	const result = await Problem.create({
 		title,
 		content,
@@ -42,19 +38,54 @@ const approveProblem = async ({ problemId }) => {
 const getProblem = async ({ id }) => {
 	try {
 		if (id) {
-			const problem = await Problem.findOne({ _id: id });
+			const result1 = await Problem.findOne({ _id: id });
 
-			if (!problem) {
+			if (!result1) {
 				throw new Error("Problem not found");
 			}
-			return problem;
+			return result1;
 		} else {
-			const problems = await Problem.find();
-			return problems;
+			const allProblems = await Problem.find();
+			return allProblems;
 		}
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-module.exports = { createProblem, approveProblem, getProblem };
+const deleteProblem = async({ id }) => {
+    const result = await Problem.findById({ _id: id })
+    await result.remove();
+}
+
+const updateProblem = async({
+    id,
+    title,
+	content,
+	tags,
+	difficulty,
+	approved,
+	userEmail,
+}) => {
+    const result = Problem.findOneAndUpdate(
+        {_id:id},
+        {
+            title,
+	        content,
+	        tags,
+	        difficulty,
+	        approved,
+	        userEmail,
+        },
+        {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        }
+    );
+
+    return result;
+}
+
+module.exports = { createProblem, approveProblem, getProblem, deleteProblem, updateProblem};
+
