@@ -2,18 +2,37 @@ const mongoose = require("mongoose");
 const { User } = require("../models");
 const config = require("../config/config");
 const bcrypt = require("bcrypt");
-// const UserToken = require("../models/userToken");
+const {generateToken} = require("./userToken");
 
 
-const getUserByEmail = async ({
+const getUserByEmail = async({
   userEmail,
 }) => {
   try {
-    const user = await User.findOne({ userEmail: userEmail })
+    const user = await User.findOne({userEmail : userEmail})
+    if(user) return user
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-    // console.log(user,userEmail);
-    if (user)
-      return user;
+const loginUser = async ({
+  userEmail,
+  userPassword
+}) => {
+  try {
+    const user = await User.findOne({ userEmail: userEmail })
+    if(!user)
+    {
+      throw new Error(" Incorrect Email or User Not Found");
+    }
+    const verifyPassword =  await bcrypt.compare(userPassword , user.userPassword );
+    if(!verifyPassword)
+    {
+      throw new Error("Incorrect Password");
+    }
+    const {accessToken , refreshToken} = await generateToken(user);
+      return {accessToken,refreshToken};
   } catch (error) {
     console.log(error);
   }
@@ -35,7 +54,6 @@ const createUser = async ({
 }) => {
   const salt = await bcrypt.genSalt(Number(config.SALT)); // auto salt is bad so fix salt in env file..
   const hashPassword = await bcrypt.hash(userPassword, salt);
-  // console.log(hashPassword);
   const user = await User.create({
     userName,
     firstName,
@@ -103,4 +121,4 @@ const getAllUserData = async () => {
   return allUsers;
 };
 
-module.exports = { getAllUserData, createUser, updateUser, deleteUser, getUserByEmail };
+module.exports = { getAllUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
