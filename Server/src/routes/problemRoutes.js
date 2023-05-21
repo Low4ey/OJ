@@ -1,13 +1,13 @@
 const express = require("express")
 const {problemController} = require("../controller");
 const {ErrorHandler} = require("../utils");
+const {authProblemSetter,authAdmin}=require("../middleware")
 const router = express.Router();
 
-router.post("/createProblem" , async(req,res,next)=>{
+router.post("/createProblem" ,authProblemSetter, async(req,res,next)=>{
 
     try {
-
-        const result = await problemController.createProblem(req.body);
+        const result = await problemController.createProblem({id:req.user._id,...req.body});
         res.json(result);
 
     } catch (error) {
@@ -47,7 +47,7 @@ router.get("/getProblem" , async(req,res,next)=>{
         next(new ErrorHandler(error))
     }
 })
-router.put("/approveProblem/:id",async(req,res,next)=>{
+router.put("/approveProblem/:id",authAdmin,async(req,res,next)=>{
     try{
         const result=await problemController.approveProblem({problemId:req.params['id']});
         res.json(result);

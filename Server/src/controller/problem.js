@@ -7,15 +7,12 @@ const createProblem = async ({
 	tags,
 	difficulty,
 	approved,
-	userEmail,
+	id,
 }) => {
-	const user = await User.findOne({ userEmail: userEmail });
-	if (!user) throw new Error("Incorrect UserEmail");
-
 	const result = await Problem.create({
 		title,
 		content,
-		createdBy: user._id,
+		createdBy: id,
 		tags,
 		difficulty,
 		approved,
