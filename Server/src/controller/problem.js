@@ -7,11 +7,12 @@ const createProblem = async ({
 	tags,
 	difficulty,
 	approved,
+	id,
 }) => {
 	const result = await Problem.create({
 		title,
 		content,
-		createdBy: user._id,
+		createdBy: id,
 		tags,
 		difficulty,
 		approved,

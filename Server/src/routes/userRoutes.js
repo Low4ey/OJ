@@ -1,7 +1,6 @@
 const express = require("express")
 const {userController} = require("../controller");
-const bcrypt = require("bcrypt");
-const {generateToken,ErrorHandler} = require("../utils");
+const {ErrorHandler} = require("../utils");
 const router = express.Router();
 
 router.post("/signup" , async(req,res,next)=>{
@@ -26,8 +25,6 @@ router.post("/login",async(req,res,next)=>{
         next(new ErrorHandler(error));
     }
 })
-
-
 
 router.put("/updateUser/:id" , async(req,res,next)=>{
 
