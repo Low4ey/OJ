@@ -1,6 +1,7 @@
 const express = require("express")
 const {userController} = require("../controller");
 const {ErrorHandler} = require("../utils");
+const { authUser } = require("../middleware");
 const router = express.Router();
 
 router.post("/signup" , async(req,res,next)=>{
@@ -26,10 +27,10 @@ router.post("/login",async(req,res,next)=>{
     }
 })
 
-router.put("/updateUser/:id" , async(req,res,next)=>{
+router.put("/updateUser",authUser, async(req,res,next)=>{
 
     try {
-        const result = await userController.updateUser({id:req.params['id'], ...req.body});
+        const result = await userController.updateUser({id:req.user._id, ...req.body});
         res.json(result);
 
     } catch (error) {
@@ -37,10 +38,10 @@ router.put("/updateUser/:id" , async(req,res,next)=>{
     }
 })
 
-router.delete("/deleteUser/:id" , async(req,res,next)=>{
+router.delete("/deleteUser/",authUser, async(req,res,next)=>{
 
     try {
-        const result = await userController.deleteUser({id:req.params['id']});
+        const result = await userController.deleteUser({id:req.user._id});
         res.json(result);
 
     } catch (error) {
