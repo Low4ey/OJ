@@ -12,10 +12,10 @@ const authProblemSetter = async (req, res, next) => {
     ) {
       try {
         token = req.headers.authorization.split(" ")[1];
-
-        const decoded = jwt.verify(token, config.JWT_SECRET);
-        const user = await User.findOne({ email: decoded.email });
-        if (user && decoded.userRole==="problemSetter") {
+        const decoded = jwt.verify(token, config.ACCESS_TOKEN_PRIVATE_KEY);
+        // console.log(decoded);
+        const user = await User.findOne({ _id: decoded._id });
+        if (user && (user.userRole==="problemSetter" || user.userRole==="Admin")) {
           req.user = user;
           next();
         } else {
@@ -24,7 +24,8 @@ const authProblemSetter = async (req, res, next) => {
         }
       } catch (error) {
         res.status(401);
-        throw new Error("Not authorized");
+        console.log(error);
+        throw new Error("Not authorized here");
       }
     } else {
       res.status(401);
