@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import "./RichTextEditor.css"
-const MarkdownEditor = () => {
+const MarkdownEditor = ({ content, onContentChange }) => {
   const quillRef = useRef(null);
 
   useEffect(() => {
@@ -20,9 +20,11 @@ const MarkdownEditor = () => {
     // Update markdown text when content changes
     quillRef.current.on('text-change', () => {
       const markdownText = quillRef.current.root.innerHTML;
+      
+      onContentChange(markdownText);
       // Use the markdown text as needed
     });
-  }, []);
+  }, [onContentChange]);
 
   const handleInsertImage = () => {
     const imageUrl = prompt('Enter the URL of the image:');

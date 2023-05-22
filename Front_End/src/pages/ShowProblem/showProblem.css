@@ -1,0 +1,81 @@
+.page-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .problem-container {
+    flex: 1;
+    padding: 16px;
+    overflow: auto;
+  }
+  
+  .problem-container h2 {
+    margin-bottom: 16px;
+  }
+  
+  .problem-data {
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    padding: 12px;
+    border-radius: 4px;
+  }
+  
+  .code-editor-container {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .code-editor-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .code-editor-option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .code-editor-option label {
+    margin-right: 8px;
+  }
+  
+  .code-editor-option select {
+    padding: 4px;
+  }
+  
+  .code-editor-option button {
+    padding: 4px 8px;
+  }
+  
+  .test-cases-container {
+    padding: 16px;
+  }
+  
+  .test-cases-container h3 {
+    margin-bottom: 16px;
+  }
+  
+  .test-cases-container textarea {
+    width: 100%;
+    padding: 8px;
+    resize: none;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .test-cases-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  
+  .test-cases-buttons button {
+    margin-left: 8px;
+  }
+  .main-page{
+    display: flex;
+  }

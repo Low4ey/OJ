@@ -19,7 +19,7 @@ const problemSchema = new Schema(
             required: true
         },
         tags:{
-            type:String//tag id
+            type:[String]//tag id
         },
         difficulty:{
             type:String,
