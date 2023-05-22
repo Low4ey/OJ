@@ -117,8 +117,21 @@ const deleteUser = async ({ id }) => {
 //Get User Data
 
 const getAllUserData = async () => {
-  const allUsers = await User.find();
-  return allUsers;
+  try {
+		if (id) {
+			const result1 = await User.findOne({ _id: id });
+
+			if (!result1) {
+				throw new Error("User not found");
+			}
+			return result1;
+		} else {
+      const allUsers = await User.find();			
+      return allUsers;
+		}
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 module.exports = { getAllUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
