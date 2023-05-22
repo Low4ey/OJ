@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
+import axios from "axios";
+import DOMPurify from "dompurify";
 import RichTextEditor from '../../components/richText/richText';
 import './problem.css';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+
+export const getAccessToken = () => {
+  const encodedToken = localStorage.getItem("accessToken");
+  if (encodedToken) {
+    const sanitizedToken = decodeURIComponent(encodedToken);
+    return DOMPurify.sanitize(sanitizedToken);
+  }
+  return null;
+};
 
 const EditorPage = () => {
     const [title, setTitle] = useState('');
@@ -12,6 +25,12 @@ const EditorPage = () => {
     const handleTitleChange = (e) => {
       setTitle(e.target.value);
     };
+
+    const handleContentChange = (e) => {
+      // const editorContent = quillRef.current.root.innerHTML;
+      setEditorContent(e.target.value);
+    };
+    
   
     const handleTagInputChange = (e) => {
       setTagInput(e.target.value);
@@ -30,15 +49,51 @@ const EditorPage = () => {
     const handleDifficultyChange = (e) => {
       setDifficulty(e.target.value);
     };
+
+    
   
-    const handleSubmit = () => {
+    const handleSubmit = async (event) => {
+
       const postData = {
         title,
-        tags,
         editorContent,
+        tags,
         difficulty,
       };
   
+      try {
+        const sanitizedProblemData = {
+          title: DOMPurify.sanitize(postData.title),
+          content: DOMPurify.sanitize(postData.editorContent),
+          tags: DOMPurify.sanitize(postData.tags),
+          difficulty: DOMPurify.sanitize(postData.difficulty),
+        };
+
+        // console.log(sanitizedProblemData);
+        const accessToken = getAccessToken();
+        // console.log(accessToken);
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          withCredentials: true,
+        };
+
+
+        const response = await axios.post(
+          "http://localhost:5005/api/createProblem",
+          sanitizedProblemData,
+          config,
+        );
+
+        console.log(response.data);
+  
+      } catch (error) {
+        
+      }
       // Make API call to post the data
       // Example:
       // fetch('your-api-endpoint', {
@@ -127,7 +182,7 @@ const EditorPage = () => {
   
         <div className="editor-section">
           <h3>Editor:</h3>
-          <RichTextEditor onChange={setEditorContent} />
+          <RichTextEditor content={editorContent} onContentChange={setEditorContent} />
         </div>
   
         <button onClick={handleSubmit} className="submit-btn">Submit</button>
