@@ -52,7 +52,7 @@ router.delete("/deleteUser/",authUser, async(req,res,next)=>{
 router.get("/getUser" , async(req,res,next)=>{
 
     try {
-        const result = await userController.getAllUserData();
+        const result = await userController.getUserData(req.query);
         res.json(result);
 
     } catch (error) {

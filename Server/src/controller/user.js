@@ -116,9 +116,10 @@ const deleteUser = async ({ id }) => {
 
 //Get User Data
 
-const getAllUserData = async () => {
+const getUserData = async ({ id }) => {
   try {
 		if (id) {
+      
 			const result1 = await User.findOne({ _id: id });
 
 			if (!result1) {
@@ -134,4 +135,4 @@ const getAllUserData = async () => {
 	}
 };
 
-module.exports = { getAllUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
+module.exports = { getUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
