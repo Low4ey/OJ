@@ -6,8 +6,11 @@ import App from './App';
 import LoginPage from './components/user/LoginPage';
 import SignupPage from './components/user/SignupPage';
 import EditorPage from './pages/AddProblem/problem';
+import ProblemPage from "./pages/ShowProblem/showProblem";
+const rootElement = document.getElementById('root');
 
-ReactDOM.render(
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <Router>
       <Routes>
@@ -15,6 +18,7 @@ ReactDOM.render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/add-problem" element={<EditorPage/>} />
+        <Route path="/problem/:problemId" element={<ProblemPage />} />
 
       </Routes>
     </Router>

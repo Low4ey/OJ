@@ -46,6 +46,7 @@ const getProblem = async ({ id }) => {
 			}
 			return result1;
 		} else {
+			// throw new Error("Invalid Page");
 			const allProblems = await Problem.find();
 			return allProblems;
 		}
