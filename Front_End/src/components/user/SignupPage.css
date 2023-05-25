@@ -1,4 +1,10 @@
-.signup-container {
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+
+/* .signup-container {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
@@ -34,4 +40,4 @@
 
 .signup-container form button:hover {
     background-color: #45a049;
-}
+} */

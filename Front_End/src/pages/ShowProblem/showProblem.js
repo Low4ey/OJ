@@ -4,7 +4,7 @@ import CodeEditor from '../../components/codeEditor/codeEditor';
 import "./showProblem.css"
 import { useParams } from 'react-router-dom';
 // import ReactMarkdown from 'react-markdown';
-import InputSlider from 'react-input-slider';
+// import InputSlider from 'react-input-slider';
 
 
 // const MarkdownComponent = ({ content }) => {

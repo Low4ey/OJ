@@ -7,6 +7,7 @@ import LoginPage from './components/user/LoginPage';
 import SignupPage from './components/user/SignupPage';
 import EditorPage from './pages/AddProblem/problem';
 import ProblemPage from "./pages/ShowProblem/showProblem";
+import './tailwind.css'; // Import Tailwind CSS styles
 const rootElement = document.getElementById('root');
 
 
