@@ -53,19 +53,19 @@ const LoginPage = () => {
       console.log(response.data);
 
       // Include the access token in the request header for subsequent API calls
-    //   const authHeader = {
-    //     headers: {
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //   };
+      //   const authHeader = {
+      //     headers: {
+      //       Authorization: `Bearer ${accessToken}`,
+      //     },
+      //   };
 
       // Example API call using the access token in the header
-    //   const userDetailsResponse = await axios.get(
-    //     "http://localhost:5005/user/details",
-    //     authHeader
-    //   );
+      //   const userDetailsResponse = await axios.get(
+      //     "http://localhost:5005/user/details",
+      //     authHeader
+      //   );
 
-    //   console.log(userDetailsResponse.data);
+      //   console.log(userDetailsResponse.data);
 
       navigate("/add-problem"); // Replace "/dashboard" with the desired redirect path
     } catch (error) {
@@ -74,25 +74,34 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="userEmail"
-          placeholder="Email"
-          value={formData.userEmail}
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="userPassword"
-          placeholder="Password"
-          value={formData.userPassword}
-          onChange={handleChange}
-        />
-        <button type="submit">Log In</button>
-      </form>
+    <div className="flex justify-center items-center min-h-screen bg-gray-900">
+      <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
+        <h2 className="text-3xl text-white mb-6">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+            type="email"
+            name="userEmail"
+            placeholder="Email"
+            value={formData.userEmail}
+            onChange={handleChange}
+          />
+          <input
+            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+            type="password"
+            name="userPassword"
+            placeholder="Password"
+            value={formData.userPassword}
+            onChange={handleChange}
+          />
+          <button
+            className="w-full bg-custom-blue hover:bg-custom-dark-blue text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
