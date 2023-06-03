@@ -52,22 +52,7 @@ const LoginPage = () => {
 
       console.log(response.data);
 
-      // Include the access token in the request header for subsequent API calls
-      //   const authHeader = {
-      //     headers: {
-      //       Authorization: `Bearer ${accessToken}`,
-      //     },
-      //   };
-
-      // Example API call using the access token in the header
-      //   const userDetailsResponse = await axios.get(
-      //     "http://localhost:5005/user/details",
-      //     authHeader
-      //   );
-
-      //   console.log(userDetailsResponse.data);
-
-      navigate("/add-problem"); // Replace "/dashboard" with the desired redirect path
+      navigate("/dashboard"); // Replace "/dashboard" with the desired redirect path
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -76,26 +61,28 @@ const LoginPage = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-3xl text-white mb-6">Login</h2>
+        <h2 className="text-3xl text-white mb-6 font-secone">Login</h2>
         <form onSubmit={handleSubmit}>
           <input
-            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400 font-poppins"
             type="email"
             name="userEmail"
             placeholder="Email"
             value={formData.userEmail}
             onChange={handleChange}
+            required
           />
           <input
-            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+            className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400 font-poppins"
             type="password"
             name="userPassword"
             placeholder="Password"
             value={formData.userPassword}
             onChange={handleChange}
+            required
           />
           <button
-            className="w-full bg-custom-blue hover:bg-custom-dark-blue text-white font-bold py-2 px-4 rounded"
+            className="w-full bg-custom-blue hover:bg-custom-dark-blue text-white font-bold py-2 px-4 rounded font-poppins"
             type="submit"
           >
             Log In

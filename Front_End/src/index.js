@@ -7,6 +7,7 @@ import LoginPage from './components/user/LoginPage';
 import SignupPage from './components/user/SignupPage';
 import EditorPage from './pages/AddProblem/problem';
 import ProblemPage from "./pages/ShowProblem/showProblem";
+import DashboardPage from "./pages/dashboard";
 import './tailwind.css'; // Import Tailwind CSS styles
 const rootElement = document.getElementById('root');
 
@@ -20,6 +21,7 @@ ReactDOM.createRoot(rootElement).render(
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/add-problem" element={<EditorPage/>} />
         <Route path="/problem/:problemId" element={<ProblemPage />} />
+        <Route path="/dashboard" element={<DashboardPage/>} />
 
       </Routes>
     </Router>
