@@ -20,8 +20,8 @@ const App = () => {
             Welcome to my MERN stack application
             {/* <RichTextEditor /> */}
             {/* <CodeEditor /> */}
-            {/* {/* <ProblemPage /> */}
-            <AddProblem />
+            <ProblemPage />
+            {/* <AddProblem /> */}
         </div>
     );
 };
