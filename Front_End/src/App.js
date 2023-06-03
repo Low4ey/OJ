@@ -22,7 +22,6 @@ const App = () => {
             {/* <CodeEditor /> */}
             {/* {/* <ProblemPage /> */}
             <AddProblem />
- */}
         </div>
     );
 };
