@@ -102,18 +102,18 @@ const EditorPage = () => {
 
         <div className="form-group">
           <label className="text-white ">Title:</label>
-          <input type="text" value={title} onChange={handleTitleChange} className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
+          <input type="text" value={title} onChange={handleTitleChange} className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
         </div>
 
         <div className="tags-section">
           <label className="text-white">Add Tags:</label>
-          <input type="text" value={tagInput} onChange={handleTagInputChange} className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
-          <button onClick={handleTagAdd} className="px-4 py-2 bg-custom-green text-white rounded-lg">Add</button>
+          <input type="text" value={tagInput} onChange={handleTagInputChange} className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
+          <button onClick={handleTagAdd} className="px-4 py-2 bg-custom-green text-white rounded-lg border ">Add</button>
           <div className="tag-list">
             {tags.map((tag) => (
               <div key={tag} className="tag">
-                <span className="tag-name">{tag}</span>
-                <span className="tag-remove" onClick={() => handleTagRemove(tag)}>X</span>
+                <span className="tag-name text-white">{tag}</span>
+                <span className="tag-remove text-white cursor-pointer" onClick={() => handleTagRemove(tag)}> [X] </span>
               </div>
             ))}
           </div>
