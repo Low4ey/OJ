@@ -2,6 +2,7 @@ import React from "react";
 import RichTextEditor from "./components/richText/richText";
 import CodeEditor from "./components/codeEditor/codeEditor";
 import ProblemPage from "./pages/ShowProblem/showProblem";
+import AddProblem from "./pages/AddProblem/problem"
 import NavigationSteps from './components/Navbar/steps';
 
 // import LoginPage from "./components/user/LoginPage";
@@ -19,7 +20,9 @@ const App = () => {
             Welcome to my MERN stack application
             {/* <RichTextEditor /> */}
             {/* <CodeEditor /> */}
-            {/* <ProblemPage /> */}
+            {/* {/* <ProblemPage /> */}
+            <AddProblem />
+ */}
         </div>
     );
 };
