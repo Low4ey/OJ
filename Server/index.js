@@ -20,7 +20,6 @@ const connectApp = async () => {
 	//database connection
 	try {
 		await dbConnect.dbConnect();
-		console.log("Database Connected");
 	} catch (error) {
 		console.log(error);
 	}
