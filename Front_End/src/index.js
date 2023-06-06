@@ -6,8 +6,13 @@ import App from './App';
 import LoginPage from './components/user/LoginPage';
 import SignupPage from './components/user/SignupPage';
 import EditorPage from './pages/AddProblem/problem';
+
+import ProblemPageDetail from "./pages/ShowProblem/showProblem";
+import ListProblemPage from './pages/ShowProblem/listProblem';
+
 import ProblemPage from "./pages/ShowProblem/showProblem";
 import DashboardPage from "./pages/dashboard";
+
 import './tailwind.css'; // Import Tailwind CSS styles
 const rootElement = document.getElementById('root');
 
@@ -20,8 +25,10 @@ ReactDOM.createRoot(rootElement).render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/add-problem" element={<EditorPage/>} />
-        <Route path="/problem/:problemId" element={<ProblemPage />} />
+        <Route path="/problem/" element={<ListProblemPage />} />
+        <Route path="/problem/:problemId" element={<ProblemPageDetail />} />
         <Route path="/dashboard" element={<DashboardPage/>} />
+
 
       </Routes>
     </Router>

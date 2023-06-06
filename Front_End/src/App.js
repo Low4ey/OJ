@@ -3,7 +3,11 @@ import RichTextEditor from "./components/richText/richText";
 import CodeEditor from "./components/codeEditor/codeEditor";
 import ProblemPage from "./pages/ShowProblem/showProblem";
 import AddProblem from "./pages/AddProblem/problem"
+
+import ProblemList from "./pages/ShowProblem/listProblem";
+
 import NavigationSteps from './components/Navbar/steps';
+
 
 // import LoginPage from "./components/user/LoginPage";
 // import SignupPage from "./components/user/SignupPage";
@@ -13,14 +17,18 @@ const App = () => {
 
     return (
         <div>
-            <NavigationSteps steps={steps} />
 
+            Welcome to my MERN stack application [HOME]
+
+            <NavigationSteps steps={steps} />
             {/* <LoginPage /> */}
             {/* <SignupPage /> */}
-            Welcome to my MERN stack application
             {/* <RichTextEditor /> */}
             {/* <CodeEditor /> */}
-            <ProblemPage />
+
+            {/* <ProblemPage /> */}
+            {/* <AddProblem /> */}
+            <ProblemList />
             {/* <AddProblem /> */}
         </div>
     );
