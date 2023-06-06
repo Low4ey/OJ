@@ -21,7 +21,10 @@ const loginUser = async ({
   userPassword
 }) => {
   try {
-    const user = await User.findOne({ userEmail: userEmail })
+    const query = {
+      $or:[{userEmail: userEmail},{userName: userEmail}]
+    }
+    const user = await User.findOne(query)
     if(!user)
     {
       throw new Error(" Incorrect Email or User Not Found");

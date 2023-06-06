@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 // };
 
 
-const Problem = ({ problemId }) => {
+const Problem = ({ problemTitle }) => {
 
   const [problemData, setProblemData] = useState('');
 
@@ -23,8 +23,9 @@ const Problem = ({ problemId }) => {
       try {
         // console.log(`http://localhost:5005/api/getProblem?id=${problemId}`);
         const response = await axios.get(
-          `http://localhost:5005/api/getProblem?id=${problemId}`,
+          `http://localhost:5005/api/getProblem?title=${problemTitle}`,
         );
+        console.log(response.data);
         setProblemData(response.data); // view this as variable
         // console.log(response.data);
       } catch (error) {
@@ -33,9 +34,7 @@ const Problem = ({ problemId }) => {
     };
 
     getProblem();
-  },[problemId]);
-
-  const markdownContent = "<p>ty<em>rr</em>rr<strong>r</strong></p>";
+  },[problemTitle]);
 
   return (
     <div className="problem-container">
@@ -91,10 +90,23 @@ const TestCases = () => {
 
 const ProblemPage = () => {
   
-  const { problemId } = useParams();
+  const title = useParams().problemTitle;
+  // console.log(temp);
+  const convertToTitle = (str) => {
+    return str.replace(/-/g, ' ');
+    // console.log(str);
+    // return str;
+  };
+
+  ;
+  // console.log(convertToTitle(temp));
+
+
+  // console.log(temp.problemTitle);
+  
   return (
     <div className="page-container">
-        <Problem  problemId={problemId}/>
+        <Problem  problemTitle={convertToTitle(title)}/>
       <div className="problem-code-container">
         <CodeEditor />
       <TestCases />

@@ -18,8 +18,13 @@ const ProblemList = () => {
       });
   };
 
-  const redirectToProblemPage = (problemId) => {
-    navigate(`/problem/${problemId}`);
+  const convertProblemName = (title) => {
+    return title.toLowerCase().replace(/\s+/g, '-');
+  };
+  
+
+  const redirectToProblemPage = (problemTitle) => {
+    navigate(`/dashboard/${problemTitle}`);
   };
 
   return (
@@ -30,7 +35,7 @@ const ProblemList = () => {
           <div
             key={problem._id}
             className="cursor-pointer mb-2 p-2 border border-gray-300"
-            onClick={() => redirectToProblemPage(problem._id)}
+            onClick={() => redirectToProblemPage(convertProblemName(problem.title))}
           >
             {problem.title}
           </div>

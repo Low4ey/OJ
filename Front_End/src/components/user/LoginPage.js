@@ -65,7 +65,7 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit}>
           <input
             className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400 font-poppins"
-            type="email"
+            type="string"
             name="userEmail"
             placeholder="Email"
             value={formData.userEmail}

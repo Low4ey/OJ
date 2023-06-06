@@ -36,10 +36,10 @@ const approveProblem = async ({ problemId }) => {
 	else throw new Error("Incorrect Problem Id");
 };
 
-const getProblem = async ({ id }) => {
+const getProblem = async ({title}) => {
 	try {
-		if (id) {
-			const result1 = await Problem.findOne({ _id: id });
+		if (title) {
+			const result1 = await Problem.findOne({ title:title});
 
 			if (!result1) {
 				throw new Error("Problem not found");
