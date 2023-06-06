@@ -25,7 +25,7 @@ const Problem = ({ problemId }) => {
         const response = await axios.get(
           `http://localhost:5005/api/getProblem?id=${problemId}`,
         );
-        setProblemData(response.data);
+        setProblemData(response.data); // view this as variable
         // console.log(response.data);
       } catch (error) {
         console.error(error);
