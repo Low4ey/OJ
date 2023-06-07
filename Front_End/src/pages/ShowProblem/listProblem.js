@@ -11,7 +11,17 @@ const ProblemList = () => {
 
   const fetchProblems = () => {
     fetch('http://localhost:5005/api/getProblem')
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } 
+        else if(response.status === 401){
+          navigate(`/login`)
+        }
+        else {
+          throw new Error('Error: ' + response.status);
+        }
+      })
       .then(data => setProblems(data))
       .catch(error => {
         console.error('Error fetching problems:', error);

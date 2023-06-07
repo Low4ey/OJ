@@ -55,21 +55,31 @@ const createUser = async ({
   userRole,
   userInstitute,
 }) => {
-  const salt = await bcrypt.genSalt(Number(config.SALT)); // auto salt is bad so fix salt in env file..
-  const hashPassword = await bcrypt.hash(userPassword, salt);
-  const user = await User.create({
-    userName,
-    firstName,
-    lastName,
-    userEmail,
-    userPhone,
-    userCountry,
-    userPassword: hashPassword,
-    userRole,
-    userInstitute,
-  });
+  try {
+    const salt = await bcrypt.genSalt(Number(config.SALT));
+    const hashPassword = await bcrypt.hash(userPassword, salt);
+    const user = await User.create({
+      userName,
+      firstName,
+      lastName,
+      userEmail,
+      userPhone,
+      userCountry,
+      userPassword: hashPassword,
+      userRole,
+      userInstitute,
+    });
 
-  return user;
+    return user;
+  } catch (error) {
+    if (error.code === 11000) {
+      // Duplicate key error
+      throw new Error("Username already exists");
+    } else {
+      // Other error
+      throw error;
+    }
+  }
 };
 
 //Update User by ID
