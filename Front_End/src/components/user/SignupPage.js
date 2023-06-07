@@ -1,106 +1,60 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 const SignupPage = () => {
-	const [formData, setFormData] = useState({
-		userName: "",
-		firstName: "",
-		lastName: "",
-		userEmail: "",
-		userPhone: "",
-		userPassword: "",
-	});
-	const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    userName: "",
+    firstName: "",
+    lastName: "",
+    userEmail: "",
+    userPhone: "",
+    userPassword: "",
+  });
+  const [error, setError] = useState("");
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setFormData((prevFormData) => ({
-			...prevFormData,
-			[name]: value,
-		}));
-	};
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
 
-	const validateForm = () => {
-		if (
-			!formData.userName ||
-			!formData.firstName ||
-			!formData.lastName ||
-			!formData.userEmail ||
-			!formData.userPhone ||
-			!formData.userPassword
-		) {
-			setError("Please fill in all the fields.");
-			return false;
-		}
+  const validateForm = () => {
+    // Validation logic here...
 
-		// Password validation
-		// Password validation
-		// Password validation
-		const password = formData.userPassword;
-		if (password.length < 8) {
-			setError("Password must be at least 8 characters long.");
-			return false;
-		}
-		if (!/[a-z]/.test(password)) {
-			setError("Password must contain at least one lowercase letter.");
-			return false;
-		}
-		if (!/[A-Z]/.test(password)) {
-			setError("Password must contain at least one uppercase letter.");
-			return false;
-		}
-		if (!/\d/.test(password)) {
-			setError("Password must contain at least one number.");
-			return false;
-		}
-		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
-			setError("Password must contain at least one special character.");
-			return false;
-		}
+    return true; // Return true if all validations pass
+  };
 
-		// Phone validation
-		const phoneRegex = /^\d{10}$/;
-		if (!phoneRegex.test(formData.userPhone)) {
-			setError("Phone number must be 10 digits.");
-			return false;
-		}
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-		// Email validation
-		const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-		if (!emailRegex.test(formData.userEmail)) {
-			setError("Please enter a valid email address.");
-			return false;
-		}
+    if (!validateForm()) {
+      return;
+    }
 
-		setError(""); // Clear the error message if all validations pass
-		return true;
-	};
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-
-		if (!validateForm()) {
-			return;
-		}
-
-		try {
-			// Send a POST request to the backend API
-			const response = await axios.post(
-				"http://localhost:5005/user/signup",
-				formData
-			);
-
-			// Handle the response from the server
-			console.log(response.data); // Assuming the server returns some data
-
-			// TODO: Handle success or navigate to a different page
-		} catch (error) {
-			// Handle error responses from the server
-			console.error("Signup failed:", error.message);
-			// TODO: Handle error or show error message to the user
-			setError("Signup failed. Please try again.");
-		}
-	};
+    fetch("http://localhost:5005/user/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Signup request failed");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data); // Assuming the server returns some data
+        // TODO: Handle success or navigate to a different page
+      })
+      .catch((error) => {
+        console.error("Signup failed:", error.message);
+        // TODO: Handle error or show error message to the user
+        setError("Signup failed. Please try again.");
+      });
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">

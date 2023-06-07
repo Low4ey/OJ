@@ -1,53 +1,41 @@
-import React, { useState , useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import CodeEditor from '../../components/codeEditor/codeEditor';
-import "./showProblem.css"
+import './showProblem.css';
 import { useParams } from 'react-router-dom';
-// import ReactMarkdown from 'react-markdown';
-// import InputSlider from 'react-input-slider';
-
-
-// const MarkdownComponent = ({ content }) => {
-//   return <ReactMarkdown>{content}</ReactMarkdown>;
-// };
-
 
 const Problem = ({ problemTitle }) => {
-
   const [problemData, setProblemData] = useState('');
 
   useEffect(() => {
-    const getProblem = async ()=> {
-      // const { problemId } = useParams();
-      // const id = "";
-      try {
-        // console.log(`http://localhost:5005/api/getProblem?id=${problemId}`);
-        const response = await axios.get(
-          `http://localhost:5005/api/getProblem?title=${problemTitle}`,
-        );
-        // console.log(response.data);
-        setProblemData(response.data); // view this as variable
-        // console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+    const getProblem = () => {
+      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch problem data');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setProblemData(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     };
 
     getProblem();
-  },[problemTitle]);
+  }, [problemTitle]);
 
   return (
     <div className="problem-container">
       <h2>Problem</h2>
       <pre className="problem-data">Title : {problemData.title}</pre>
-      {/* <ReactMarkdown>{markdownContent}</ReactMarkdown> */}
-      {/* <ReactMarkdown>{problemData.content}</ReactMarkdown> */}
-      
-      <pre className="problem-data">Content : <p dangerouslySetInnerHTML={{__html: problemData.content}}></p></pre>
+      <pre className="problem-data">
+        Content :{' '}
+        <p dangerouslySetInnerHTML={{ __html: problemData.content }}></p>
+      </pre>
       <pre className="problem-data">Difficulty : {problemData.difficulty}</pre>
       <pre className="problem-data">Tags : {problemData.tags}</pre>
-
-
     </div>
   );
 };
@@ -60,13 +48,11 @@ const TestCases = () => {
   };
 
   const handleRunCode = () => {
-    // Implement code execution logic here
     console.log('Running code...');
     console.log('Test cases:', testCases);
   };
 
   const handleSubmitCode = () => {
-    // Implement code submission logic here
     console.log('Submitting code...');
     console.log('Test cases:', testCases);
   };
@@ -89,27 +75,18 @@ const TestCases = () => {
 };
 
 const ProblemPage = () => {
-  
-  const title = useParams().problemTitle;
-  // console.log(temp);
+  const { problemTitle } = useParams();
+
   const convertToTitle = (str) => {
     return str.replace(/-/g, ' ');
-    // console.log(str);
-    // return str;
   };
 
-  ;
-  // console.log(convertToTitle(temp));
-
-
-  // console.log(temp.problemTitle);
-  
   return (
     <div className="page-container">
-        <Problem  problemTitle={convertToTitle(title)}/>
+      <Problem problemTitle={convertToTitle(problemTitle)} />
       <div className="problem-code-container">
         <CodeEditor />
-      <TestCases />
+        <TestCases />
       </div>
     </div>
   );
