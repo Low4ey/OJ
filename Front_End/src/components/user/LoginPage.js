@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
 
@@ -25,37 +24,38 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    try {
-      const sanitizedFormData = {
-        userEmail: DOMPurify.sanitize(formData.userEmail),
-        userPassword: DOMPurify.sanitize(formData.userPassword),
-      };
+    const sanitizedFormData = {
+      userEmail: DOMPurify.sanitize(formData.userEmail),
+      userPassword: DOMPurify.sanitize(formData.userPassword),
+    };
 
-      const response = await axios.post(
-        "http://localhost:5005/user/login",
-        sanitizedFormData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
+    fetch("http://localhost:5005/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: JSON.stringify(sanitizedFormData),
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Login failed");
         }
-      );
-
-      const { accessToken } = response.data;
-
-      storeAccessToken(accessToken);
-
-      console.log(response.data);
-
-      navigate("/dashboard"); // Replace "/dashboard" with the desired redirect path
-    } catch (error) {
-      console.error("Login failed:", error.message);
-    }
+        return response.json();
+      })
+      .then((data) => {
+        const { accessToken } = data;
+        storeAccessToken(accessToken);
+        console.log(data);
+        navigate("/dashboard"); // Replace "/dashboard" with the desired redirect path
+      })
+      .catch((error) => {
+        console.error("Login failed:", error.message);
+      });
   };
 
   return (

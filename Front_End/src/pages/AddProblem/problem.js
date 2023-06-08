@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from "axios";
 import DOMPurify from "dompurify";
 import RichTextEditor from '../../components/richText/richText';
 
@@ -74,13 +73,26 @@ const EditorPage = () => {
         withCredentials: true,
       };
 
-      const response = await axios.post(
-        "http://localhost:5005/api/createProblem",
-        sanitizedProblemData,
-        config,
-      );
-
-      console.log(response.data);
+      fetch("http://localhost:5005/api/createProblem", {
+        method: "POST",
+        headers: config.headers,
+        body: JSON.stringify(sanitizedProblemData),
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Submit request failed");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          // TODO: Handle success or navigate to a different page
+        })
+        .catch((error) => {
+          console.error(error);
+          // TODO: Handle error
+        });
 
     } catch (error) {
       console.error(error);
