@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import DOMPurify from "dompurify";
 import RichTextEditor from '../../components/richText/richText';
 
@@ -17,13 +17,10 @@ const EditorPage = () => {
   const [tags, setTags] = useState([]);
   const [editorContent, setEditorContent] = useState('');
   const [difficulty, setDifficulty] = useState('easy');
+  const [error, setError] = useState("");
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
-  };
-
-  const handleContentChange = (e) => {
-    setEditorContent(e.target.value);
   };
 
   const handleTagInputChange = (e) => {
@@ -44,10 +41,41 @@ const EditorPage = () => {
     setDifficulty(e.target.value);
   };
 
+  useEffect(() => {
+    try {
+      const accessToken = getAccessToken();
+      fetch(`http://localhost:5005/user/getUserRole?token=${accessToken}` , {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // console.log(data);
+          if(data !== "Admin")
+          {
+            setError('You are not authorized to access this page.');
+          }
+          // TODO: Handle success or navigate to a different page
+        })
+        .catch((error) => {
+          console.error(error);
+          // TODO: Handle error
+        });
+
+    } catch (error) {
+      console.error(error);
+    }
+    }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const postData = {
+    const postData = {  
       title,
       editorContent,
       tags,
@@ -63,6 +91,7 @@ const EditorPage = () => {
       };
 
       const accessToken = getAccessToken();
+
 
       const config = {
         headers: {
@@ -105,6 +134,10 @@ const EditorPage = () => {
     setEditorContent('');
     setDifficulty('easy');
   };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">

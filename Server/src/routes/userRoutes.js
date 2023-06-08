@@ -60,4 +60,17 @@ router.get("/getUser" , async(req,res,next)=>{
     }
 })
 
+router.get("/getUserRole" , async(req,res,next)=>{
+
+    try {
+        const result = await userController.getUserRole(req.query);
+        res.json(result);
+
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+})
+
+
+
 module.exports = router; 

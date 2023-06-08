@@ -1,14 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import CodeEditor from '../../components/codeEditor/codeEditor';
 import './showProblem.css';
+import DOMPurify from "dompurify";
 import { useParams } from 'react-router-dom';
+
+const getAccessToken = () => {
+  const encodedToken = localStorage.getItem("accessToken");
+  if (encodedToken) {
+    const sanitizedToken = decodeURIComponent(encodedToken);
+    return DOMPurify.sanitize(sanitizedToken);
+  }
+  return null;
+};
 
 const Problem = ({ problemTitle }) => {
   const [problemData, setProblemData] = useState('');
 
+  const accessToken = getAccessToken();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        withCredentials: true,
+      };
+
   useEffect(() => {
     const getProblem = () => {
-      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`)
+      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`,{
+        method: "GET",
+        headers: config.headers,
+        credentials: "include",
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch problem data');

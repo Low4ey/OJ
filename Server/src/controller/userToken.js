@@ -18,7 +18,8 @@ const createUserToken = async ({
 
 const generateToken = async(user) =>{
     try {
-        const payload = {_id:user._id};
+        const payload = {_id:user._id , userRole:user.userRole};
+        
         const accessToken = jwt.sign(
             payload,
             config.ACCESS_TOKEN_PRIVATE_KEY,

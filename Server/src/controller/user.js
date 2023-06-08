@@ -3,6 +3,8 @@ const { User } = require("../models");
 const config = require("../config/config");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
+const jwt = require("jsonwebtoken");
+
 
 
 const getUserByEmail = async({
@@ -148,4 +150,22 @@ const getUserData = async ({ id }) => {
 	}
 };
 
-module.exports = { getUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail};
+const getUserRole = async({ token }) => {
+  try {
+    if(token)
+    {
+      const decoded = jwt.verify(
+        token,
+        config.ACCESS_TOKEN_PRIVATE_KEY
+      );
+      // console.log(decoded);
+
+      return decoded.userRole; // change to user role 
+    }
+    else throw new Error("No token Found")
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+module.exports = { getUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail, getUserRole};
