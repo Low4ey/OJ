@@ -50,7 +50,7 @@ const LoginPage = () => {
       .then((data) => {
         const { accessToken } = data;
         storeAccessToken(accessToken);
-        console.log(data);
+        // console.log(data);  
         navigate("/dashboard"); // Replace "/dashboard" with the desired redirect path
       })
       .catch((error) => {

@@ -2,28 +2,78 @@ import React, { useState } from "react";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
-    userName: "",
-    firstName: "",
-    lastName: "",
-    userEmail: "",
-    userPhone: "",
-    userPassword: "",
-  });
-  const [error, setError] = useState("");
+		userName: "",
+		firstName: "",
+		lastName: "",
+		userEmail: "",
+		userPhone: "",
+		userPassword: "",
+	});
+	const [error, setError] = useState("");
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
+	const handleChange = (event) => {
+		const { name, value } = event.target;
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			[name]: value,
+		}));
+	};
 
   const validateForm = () => {
-    // Validation logic here...
+		if (
+			!formData.userName ||
+			!formData.firstName ||
+			!formData.lastName ||
+			!formData.userEmail ||
+			!formData.userPhone ||
+			!formData.userPassword
+		) {
+			setError("Please fill in all the fields.");
+			return false;
+		}
 
-    return true; // Return true if all validations pass
-  };
+		// Password validation
+		// Password validation
+		// Password validation
+		const password = formData.userPassword;
+		if (password.length < 8) {
+			setError("Password must be at least 8 characters long.");
+			return false;
+		}
+		if (!/[a-z]/.test(password)) {
+			setError("Password must contain at least one lowercase letter.");
+			return false;
+		}
+		if (!/[A-Z]/.test(password)) {
+			setError("Password must contain at least one uppercase letter.");
+			return false;
+		}
+		if (!/\d/.test(password)) {
+			setError("Password must contain at least one number.");
+			return false;
+		}
+		if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+			setError("Password must contain at least one special character.");
+			return false;
+		}
+
+		// Phone validation
+		const phoneRegex = /^\d{10}$/;
+		if (!phoneRegex.test(formData.userPhone)) {
+			setError("Phone number must be 10 digits.");
+			return false;
+		}
+
+		// Email validation
+		const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+		if (!emailRegex.test(formData.userEmail)) {
+			setError("Please enter a valid email address.");
+			return false;
+		}
+
+		setError(""); // Clear the error message if all validations pass
+		return true;
+	};
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -52,7 +102,7 @@ const SignupPage = () => {
       .catch((error) => {
         console.error("Signup failed:", error.message);
         // TODO: Handle error or show error message to the user
-        setError("Signup failed. Please try again.");
+        setError(`${error.message}`);
       });
   };
 
@@ -85,6 +135,7 @@ const SignupPage = () => {
             placeholder="Last Name"
             value={formData.lastName}
             onChange={handleChange}
+            
           />
           <input
             className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
@@ -93,6 +144,7 @@ const SignupPage = () => {
             placeholder="Email"
             value={formData.userEmail}
             onChange={handleChange}
+            
           />
           <input
             className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
@@ -101,6 +153,7 @@ const SignupPage = () => {
             placeholder="Phone"
             value={formData.userPhone}
             onChange={handleChange}
+            
           />
           <input
             className="w-full mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
@@ -109,6 +162,7 @@ const SignupPage = () => {
             placeholder="Password"
             value={formData.userPassword}
             onChange={handleChange}
+            
           />
           <button
             className="w-full bg-custom-blue hover:bg-custom-dark-blue text-white font-bold py-2 px-4 rounded"
