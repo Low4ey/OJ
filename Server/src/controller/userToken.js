@@ -23,7 +23,7 @@ const generateToken = async(user) =>{
         const accessToken = jwt.sign(
             payload,
             config.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: "14m"}
+            { expiresIn: "20m"}
         )
         const refreshToken = jwt.sign(
             payload,
@@ -43,4 +43,27 @@ const generateToken = async(user) =>{
     }
 }
 
-module.exports = {createUserToken,generateToken};
+const refreshAccessToken = async(refreshToken) => {
+    try {
+
+        const decodedToken = jwt.verify(refreshToken, config.REFRESH_TOKEN_PRIVATE_KEY);
+        const userToken = await UserToken.findOne({ token: refreshToken });
+        if (!userToken) {
+        throw new Error('Refresh token not found');
+        }
+        if(!decodedToken) 
+        {
+            throw new Error('Invalid Token');
+        }
+        const accessToken = jwt.sign({ _id: decodedToken._id }, config.ACCESS_TOKEN_PRIVATE_KEY, {
+            expiresIn: '20m',
+          });
+
+        return {accessToken};
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {createUserToken,generateToken, refreshAccessToken};
