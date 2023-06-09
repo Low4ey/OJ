@@ -12,7 +12,7 @@ router.post("/signup" , async(req,res,next)=>{
         res.json(result);
 
     } catch (error) {
-        next(new ErrorHandler(error))
+        next(error);
     }
 })
 

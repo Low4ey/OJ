@@ -90,17 +90,24 @@ const SignupPage = () => {
       body: JSON.stringify(formData),
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Signup request failed");
+        if (response.ok) {
+          return response.json();
         }
-        return response.json();
+        else 
+        {
+          return response.json().then(error => {
+            throw new Error(error.message);
+          });
+    
+          // throw new Error("Error");
+        }
       })
       .then((data) => {
         console.log(data); // Assuming the server returns some data
         // TODO: Handle success or navigate to a different page
       })
       .catch((error) => {
-        console.error("Signup failed:", error.message);
+        // console.error("Signup failed:", error.message);
         // TODO: Handle error or show error message to the user
         setError(`${error.message}`);
       });

@@ -10,12 +10,14 @@ const connectApp = async () => {
 	//middleware
 	app.use(express.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(errorMiddleware);
 	//adding CORS
 	app.use(corsConnect.corsConnect());
 	//Routes
 	app.use("/user", userRouter);
 	app.use("/api",tokenRouter,problemRouter,editorialRouter,testCaseRouter);
+
+	app.use(errorMiddleware);
+
 	// app.use("/problem-api" , problemRouter);
 	//database connection
 	try {

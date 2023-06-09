@@ -74,15 +74,24 @@ const createUser = async ({
 
     return user;
   } catch (error) {
-    if (error.code === 11000) {
-      // Duplicate key error
-      throw new Error("Username already exists");
-    } else {
-      // Other error
-      throw error;
-    }
+    throw error;
+    // if (error.code === 11000) {
+    //   const duplicateField = Object.keys(error.keyValue)[0];
+    //   if (duplicateField === 'userName') {
+    //     throw new Error('Username already exists.');
+    //   } else if (duplicateField === 'userEmail') {
+    //     throw new Error('Email already exists.');
+    //   } else if (duplicateField === 'userPhone') {
+    //     throw new Error('Phone number already exists.');
+    //   } else {
+    //     throw new Error('Duplicate key error.');
+    //   }
+    // } else {
+    //   throw error;
+    // }
   }
 };
+
 
 //Update User by ID
 
