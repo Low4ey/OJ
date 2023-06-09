@@ -5,8 +5,9 @@ import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/mode-c_cpp';
 import 'ace-builds/src-noconflict/theme-chrome';
 import 'ace-builds/src-noconflict/theme-monokai';
+import 'ace-builds/src-noconflict/ext-language_tools'; // Import the language_tools extension
 
-import './CodeEditor.css'; // Import CSS file for styling
+import './CodeEditor.css';
 
 const CodeEditor = () => {
   const [code, setCode] = useState('');
@@ -50,6 +51,7 @@ const CodeEditor = () => {
         <button className="code-editor-option" onClick={handleResetCode}>Reset Code</button>
       </div>
       <AceEditor
+        setOptions={{ useWorker: false }}
         mode={language}
         theme={theme}
         value={code}

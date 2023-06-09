@@ -1,7 +1,7 @@
 const express = require("express")
 const {problemController} = require("../controller");
 const {ErrorHandler} = require("../utils");
-const {authProblemSetter,authAdmin}=require("../middleware")
+const {authProblemSetter,authAdmin,authUser}=require("../middleware")
 const router = express.Router();
 
 router.post("/createProblem" ,authProblemSetter, async(req,res,next)=>{
@@ -37,7 +37,7 @@ router.post("/createProblem" ,authProblemSetter, async(req,res,next)=>{
 //     }
 // })
 
-router.get("/getProblem" , async(req,res,next)=>{
+router.get("/getProblem",authUser, async(req,res,next)=>{
 
     try {
         const result = await problemController.getProblem(req.query);

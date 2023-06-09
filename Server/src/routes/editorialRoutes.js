@@ -37,8 +37,7 @@ router.delete("/deleteEditorial/:id" , async(req,res,next)=>{
     }
 })
 
-router.get("/getEditorial" , async(req,res,next)=>{
-
+router.get("/getEditorial", async(req,res,next)=>{
     try {
         const result = await editorialController.getEditorial(req.body);
         res.json(result);
@@ -47,7 +46,7 @@ router.get("/getEditorial" , async(req,res,next)=>{
         next(new ErrorHandler(error))
     }
 })
-router.post("./approveEditorial",async(req,res,next)=>{
+router.post("/approveEditorial",async(req,res,next)=>{
     try{
         const result=await editorialController.approveEditorial(req.body);
         res.json(result);

@@ -1,54 +1,66 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import CodeEditor from '../../components/codeEditor/codeEditor';
-import "./showProblem.css"
+import './showProblem.css';
+import DOMPurify from "dompurify";
 import { useParams } from 'react-router-dom';
-// import ReactMarkdown from 'react-markdown';
-// import InputSlider from 'react-input-slider';
 
+const getAccessToken = () => {
+  const encodedToken = localStorage.getItem("accessToken");
+  if (encodedToken) {
+    const sanitizedToken = decodeURIComponent(encodedToken);
+    return DOMPurify.sanitize(sanitizedToken);
+  }
+  return null;
+};
 
-// const MarkdownComponent = ({ content }) => {
-//   return <ReactMarkdown>{content}</ReactMarkdown>;
-// };
-
-
-const Problem = ({ problemId }) => {
-
+const Problem = ({ problemTitle }) => {
   const [problemData, setProblemData] = useState('');
 
+  const accessToken = getAccessToken();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        withCredentials: true,
+      };
+
   useEffect(() => {
-    const getProblem = async () => {
-      // const { problemId } = useParams();
-      // const id = "";
-      try {
-        // console.log(`http://localhost:5005/api/getProblem?id=${problemId}`);
-        const response = await axios.get(
-          `http://localhost:5005/api/getProblem?id=${problemId}`,
-        );
-        setProblemData(response.data);
-        // console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+    const getProblem = () => {
+      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`,{
+        method: "GET",
+        headers: config.headers,
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch problem data');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setProblemData(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     };
 
     getProblem();
-  }, [problemId]);
-
-  const markdownContent = "<p>ty<em>rr</em>rr<strong>r</strong></p>";
+  }, [problemTitle]);
 
   return (
     <div className="problem-container">
       <h2>Problem</h2>
       <pre className="problem-data">Title : {problemData.title}</pre>
-      {/* <ReactMarkdown>{markdownContent}</ReactMarkdown> */}
-      {/* <ReactMarkdown>{problemData.content}</ReactMarkdown> */}
-
-      <pre className="problem-data">Content : <p dangerouslySetInnerHTML={{ __html: problemData.content }}></p></pre>
+      <pre className="problem-data">
+        Content :{' '}
+        <p dangerouslySetInnerHTML={{ __html: problemData.content }}></p>
+      </pre>
       <pre className="problem-data">Difficulty : {problemData.difficulty}</pre>
       <pre className="problem-data">Tags : {problemData.tags}</pre>
-
-
     </div>
   );
 };
@@ -61,13 +73,11 @@ const TestCases = () => {
   };
 
   const handleRunCode = () => {
-    // Implement code execution logic here
     console.log('Running code...');
     console.log('Test cases:', testCases);
   };
 
   const handleSubmitCode = () => {
-    // Implement code submission logic here
     console.log('Submitting code...');
     console.log('Test cases:', testCases);
   };
@@ -90,90 +100,20 @@ const TestCases = () => {
 };
 
 const ProblemPage = () => {
-  const refBox = useRef(null);
-  const refRight = useRef(null);
-  const refBottom = useRef(null);
-  useEffect(() => {
-    const resizeableElement = refBox.current;
-    const styles = window.getComputedStyle(resizeableElement);
-    let width = parseInt(styles.width, 10);
-    let height = parseInt(styles.height, 10);
-    let xCord = 0;
-    let yCord = 0;
-    resizeableElement.style.top = '150px';
-    resizeableElement.style.left = '150px';
+  const { problemTitle } = useParams();
 
-    // Right
-    const onMouseMoveRightResize = (event) => {
-      const dx = event.clientX - xCord;
-      width = width + dx;
-      xCord = event.clientX;
-      resizeableElement.style.width = `${width}px`;
-    };
+  const convertToTitle = (str) => {
+    return str.replace(/-/g, ' ');
+  };
 
-    const onMouseUpRightResize = () => {
-      document.removeEventListener('mousemove', onMouseMoveRightResize);
-    };
-
-    const onMouseDownRightResize = (event) => {
-      xCord = event.clientX;
-      const styles = window.getComputedStyle(resizeableElement);
-      resizeableElement.style.left = styles.left;
-      resizeableElement.style.right = null;
-      document.addEventListener('mousemove', onMouseMoveRightResize);
-      document.addEventListener('mouseup', onMouseUpRightResize);
-    };
-
-    // Bottom
-    const onMouseMoveBottomResize = (event) => {
-      const dy = event.clientY - yCord;
-      height = height + dy;
-      yCord = event.clientY;
-      resizeableElement.style.height = `${height}px`;
-    };
-
-    const onMouseUpBottomResize = () => {
-      document.removeEventListener('mousemove', onMouseMoveBottomResize);
-    };
-
-    const onMouseDownBottomResize = (event) => {
-      yCord = event.clientY;
-      const styles = window.getComputedStyle(resizeableElement);
-      resizeableElement.style.top = styles.top;
-      resizeableElement.style.bottom = null;
-      document.addEventListener('mousemove', onMouseMoveBottomResize);
-      document.addEventListener('mouseup', onMouseUpBottomResize);
-    };
-
-    const resizerRight = refRight.current;
-    resizerRight.addEventListener('mousedown', onMouseDownRightResize);
-
-    const resizerBottom = refBottom.current;
-    resizerBottom.addEventListener('mousedown', onMouseDownBottomResize);
-
-    return () => {
-      resizerRight.removeEventListener('mousedown', onMouseDownRightResize);
-      resizerBottom.removeEventListener('mousedown', onMouseDownBottomResize);
-    };
-  }, []);
-
-  const { problemId } = useParams();
   return (
-    <>
-      <div className="page-container">
-        <div className='wrapper'>
-          <div ref={refBox} className='resizeable-box'>
-            <div ref={refRight} className='resizer rr'></div>
-            <div ref={refBottom} className='resizer rb'></div>
-            <Problem problemId={problemId} />
-          </div>
-        </div>
-        <div className="problem-code-container">
-          <CodeEditor />
-          <TestCases />
-        </div>
+    <div className="page-container">
+      <Problem problemTitle={convertToTitle(problemTitle)} />
+      <div className="problem-code-container">
+        <CodeEditor />
+        <TestCases />
       </div>
-    </>
+    </div>
   );
 };
 
