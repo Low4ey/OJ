@@ -1,9 +1,9 @@
-import React, { useState , useEffect } from 'react';
-import DOMPurify from "dompurify";
+import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import RichTextEditor from '../../components/richText/richText';
 
 const getAccessToken = () => {
-  const encodedToken = localStorage.getItem("accessToken");
+  const encodedToken = localStorage.getItem('accessToken');
   if (encodedToken) {
     const sanitizedToken = decodeURIComponent(encodedToken);
     return DOMPurify.sanitize(sanitizedToken);
@@ -12,12 +12,13 @@ const getAccessToken = () => {
 };
 
 const EditorPage = () => {
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [title, setTitle] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState([]);
   const [editorContent, setEditorContent] = useState('');
   const [difficulty, setDifficulty] = useState('easy');
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -44,38 +45,36 @@ const EditorPage = () => {
   useEffect(() => {
     try {
       const accessToken = getAccessToken();
-      fetch(`http://localhost:5005/user/getUserRole?token=${accessToken}` , {
-        method: "GET",
-        credentials: "include",
+      fetch(`http://localhost:5005/user/getUserRole?token=${accessToken}`, {
+        method: 'GET',
+        credentials: 'include',
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Error");
+            throw new Error('Error');
           }
           return response.json();
         })
         .then((data) => {
-          // console.log(data);
-          if(data !== "Admin")
-          {
+          if (data === 'Admin') {
+            setIsAuthorized(true);
+          } else {
             setError('You are not authorized to access this page.');
           }
-          // TODO: Handle success or navigate to a different page
         })
         .catch((error) => {
           console.error(error);
           // TODO: Handle error
-        });
-
+        })
     } catch (error) {
       console.error(error);
     }
-    }, []);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const postData = {  
+    const postData = {
       title,
       editorContent,
       tags,
@@ -92,25 +91,24 @@ const EditorPage = () => {
 
       const accessToken = getAccessToken();
 
-
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
         withCredentials: true,
       };
 
-      fetch("http://localhost:5005/api/createProblem", {
-        method: "POST",
+      fetch('http://localhost:5005/api/createProblem', {
+        method: 'POST',
         headers: config.headers,
         body: JSON.stringify(sanitizedProblemData),
-        credentials: "include",
+        credentials: 'include',
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Submit request failed");
+            throw new Error('Submit request failed');
           }
           return response.json();
         })
@@ -122,7 +120,6 @@ const EditorPage = () => {
           console.error(error);
           // TODO: Handle error
         });
-
     } catch (error) {
       console.error(error);
     }
@@ -135,30 +132,49 @@ const EditorPage = () => {
     setDifficulty('easy');
   };
 
-  if (error) {
+  if (!isAuthorized) {
     return <div>{error}</div>;
-  }
-
-  return (
+  } else {
+    return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
-      {/* <div className="bg-custom-gray rounded-lg p-8 max-w-md w-full">       */}
       <div className="justify-center items-center bg-gray-800 rounded-lg p-8 max-w-screen-lg w-full">
         <h1 className="text-3xl text-white mb-6">Editor Page</h1>
 
         <div className="form-group">
-          <label className="text-white ">Title:</label>
-          <input type="text" value={title} onChange={handleTitleChange} className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
+          <label className="text-white">Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+          />
         </div>
 
         <div className="tags-section">
           <label className="text-white">Add Tags:</label>
-          <input type="text" value={tagInput} onChange={handleTagInputChange} className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400" />
-          <button onClick={handleTagAdd} className="px-4 py-2 bg-custom-green text-white rounded-lg border ">Add</button>
+          <input
+            type="text"
+            value={tagInput}
+            onChange={handleTagInputChange}
+            className="w-4/5 mb-4 px-4 py-2 rounded-lg bg-custom-gray text-white placeholder-gray-400"
+          />
+          <button
+            onClick={handleTagAdd}
+            className="px-4 py-2 bg-custom-green text-white rounded-lg border"
+          >
+            Add
+          </button>
           <div className="tag-list">
             {tags.map((tag) => (
               <div key={tag} className="tag">
                 <span className="tag-name text-white">{tag}</span>
-                <span className="tag-remove text-white cursor-pointer" onClick={() => handleTagRemove(tag)}> [X] </span>
+                <span
+                  className="tag-remove text-white cursor-pointer"
+                  onClick={() => handleTagRemove(tag)}
+                >
+                  {' '}
+                  [X]{' '}
+                </span>
               </div>
             ))}
           </div>
@@ -175,7 +191,9 @@ const EditorPage = () => {
                 checked={difficulty === 'easy'}
                 onChange={handleDifficultyChange}
               />
-              <label htmlFor="easy" className="text-white">Easy</label>
+              <label htmlFor="easy" className="text-white">
+                Easy
+              </label>
             </div>
             <div className="difficulty-option">
               <input
@@ -185,7 +203,9 @@ const EditorPage = () => {
                 checked={difficulty === 'medium'}
                 onChange={handleDifficultyChange}
               />
-              <label htmlFor="medium" className="text-white">Medium</label>
+              <label htmlFor="medium" className="text-white">
+                Medium
+              </label>
             </div>
             <div className="difficulty-option">
               <input
@@ -195,7 +215,9 @@ const EditorPage = () => {
                 checked={difficulty === 'hard'}
                 onChange={handleDifficultyChange}
               />
-              <label htmlFor="hard" className="text-white">Hard</label>
+              <label htmlFor="hard" className="text-white">
+                Hard
+              </label>
             </div>
           </div>
         </div>
@@ -205,10 +227,16 @@ const EditorPage = () => {
           <RichTextEditor content={editorContent} onContentChange={setEditorContent} />
         </div>
 
-        <button onClick={handleSubmit} className="w-full mt-4 px-4 py-2 bg-custom-blue text-white rounded-lg">Submit</button>
+        <button
+          onClick={handleSubmit}
+          className="w-full mt-4 px-4 py-2 bg-custom-blue text-white rounded-lg"
+        >
+          Submit
+        </button>
       </div>
     </div>
   );
 };
+}
 
 export default EditorPage;
