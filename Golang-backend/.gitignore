@@ -1,0 +1,57 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go specific
+*.test
+*.out
+
+# Dependency directories
+/bin
+/pkg
+/vendor
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and generated files
+/log/
+*.log
+*.log.*
+*.swp
+*~
+
+# Environment-specific files
+.env
+.env.local
+.env.*.local
+
+# Binary files (images, videos, etc.)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.woff
+*.woff2
+*.eot
+*.ttf
+*.mp4
+*.avi
+*.webm
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+app.env

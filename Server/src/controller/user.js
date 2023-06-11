@@ -74,23 +74,10 @@ const createUser = async ({
 
     return user;
   } catch (error) {
-    throw error;
-    // if (error.code === 11000) {
-    //   const duplicateField = Object.keys(error.keyValue)[0];
-    //   if (duplicateField === 'userName') {
-    //     throw new Error('Username already exists.');
-    //   } else if (duplicateField === 'userEmail') {
-    //     throw new Error('Email already exists.');
-    //   } else if (duplicateField === 'userPhone') {
-    //     throw new Error('Phone number already exists.');
-    //   } else {
-    //     throw new Error('Duplicate key error.');
-    //   }
-    // } else {
-    //   throw error;
-    // }
+      throw error;
   }
 };
+
 
 
 //Update User by ID
@@ -125,7 +112,6 @@ const updateUser = async ({ id,
     useFindAndModify: false,
   }
   );
-
   return user;
 }
 
@@ -155,7 +141,7 @@ const getUserData = async ({ id }) => {
       return allUsers;
 		}
 	} catch (error) {
-		console.log(error);
+		throw error;
 	}
 };
 
