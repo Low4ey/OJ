@@ -34,7 +34,7 @@ const ProblemList = () => {
 	};
 
 	const fetchProblems = () => {
-		fetch("http://localhost:5005/api/getProblem", {
+		fetch("http://localhost:5005/api/getProblem?approved=true", {
 			method: "GET",
 			headers: config.headers,
 			credentials: "include",
