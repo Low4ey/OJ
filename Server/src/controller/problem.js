@@ -41,23 +41,21 @@ const approveProblem = async ({ problemId }) => {
 	else throw new Error("Incorrect Problem Id");
 };
 
-const getProblem = async ({title,approved}) => {
+const getProblem = async ({title}) => {
 	try {
-		if (title && approved) {
-			const result1 = await Problem.findOne({ title:title , approved:true});
+		if (title) {
+			const result1 = await Problem.findOne({$and: [{title: title},{ approved: true }]});
 
 			if (!result1) {
 				throw new Error("Problem not found");
 			}
 			return result1;
-		} else if (approved){
+		} else{
 			// throw new Error("Invalid Page");
 			const allProblems = await Problem.find({approved:true});
 			return allProblems;
 		}
-		else {
-			throw error;
-		}
+
 	} catch (error) {
 		console.log(error);
 		throw error;
