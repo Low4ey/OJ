@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DOMPurify from "dompurify";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -19,14 +20,23 @@ const SignupPage = () => {
 		}));
 	};
 
+  const sanitizedFormData = {
+    userName: DOMPurify.sanitize(formData.userName),
+    firstName: DOMPurify.sanitize(formData.firstName),
+    lastName: DOMPurify.sanitize(formData.lastName),
+    userEmail: DOMPurify.sanitize(formData.userEmail),
+    userPhone: DOMPurify.sanitize(formData.userPhone),
+    userPassword: DOMPurify.sanitize(formData.userPassword),
+  };
+
   const validateForm = () => {
 		if (
-			!formData.userName ||
-			!formData.firstName ||
-			!formData.lastName ||
-			!formData.userEmail ||
-			!formData.userPhone ||
-			!formData.userPassword
+			!sanitizedFormData.userName ||
+      !sanitizedFormData.firstName ||
+			!sanitizedFormData.lastName ||
+			!sanitizedFormData.userEmail ||
+			!sanitizedFormData.userPhone ||
+			!sanitizedFormData.userPassword
 		) {
 			setError("Please fill in all the fields.");
 			return false;
@@ -35,7 +45,7 @@ const SignupPage = () => {
 		// Password validation
 		// Password validation
 		// Password validation
-		const password = formData.userPassword;
+		const password = sanitizedFormData.userPassword;
 		if (password.length < 8) {
 			setError("Password must be at least 8 characters long.");
 			return false;
@@ -59,14 +69,14 @@ const SignupPage = () => {
 
 		// Phone validation
 		const phoneRegex = /^\d{10}$/;
-		if (!phoneRegex.test(formData.userPhone)) {
+		if (!phoneRegex.test(sanitizedFormData.userPhone)) {
 			setError("Phone number must be 10 digits.");
 			return false;
 		}
 
 		// Email validation
 		const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-		if (!emailRegex.test(formData.userEmail)) {
+		if (!emailRegex.test(sanitizedFormData.userEmail)) {
 			setError("Please enter a valid email address.");
 			return false;
 		}
@@ -87,7 +97,7 @@ const SignupPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(sanitizedFormData),
     })
       .then((response) => {
         if (response.ok) {
