@@ -89,7 +89,7 @@ const EditorPage = () => {
 
     try {
       const sanitizedProblemData = {
-        title: DOMPurify.sanitize(postData.title),
+        title: DOMPurify.sanitize(postData.title).trim(),
         content: DOMPurify.sanitize(postData.editorContent),
         tags: DOMPurify.sanitize(postData.tags),
         difficulty: DOMPurify.sanitize(postData.difficulty),
