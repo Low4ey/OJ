@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var DB_URI = os.Getenv("DB_URI")
+var DB_URI = "mongodb+srv://mysql:mysql@user.szotvvp.mongodb.net/?retryWrites=true&w=majority"
+
 var DB_NAME = "test"
 
 func DBSet() *mongo.Client {

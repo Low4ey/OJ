@@ -7,8 +7,7 @@ import (
 
 func SubmissionRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/submit", controllers.Submit())
-	incomingRoutes.GET("/getallsubmission", controllers.GetAllSubmission())
-	incomingRoutes.GET("/getsubmission", controllers.GetSubmissionByQuestionId())
-	incomingRoutes.GET("/getsubmission", controllers.GetSubmissionByUserId())
-
+	incomingRoutes.GET("/getallsubmission", controllers.GetAllSub())
+	incomingRoutes.GET("/getsubmission/question/:questionId", controllers.GetSubByQuestionId())
+	incomingRoutes.GET("/getsubmission/user/:userId", controllers.GetSubByUserId())
 }
