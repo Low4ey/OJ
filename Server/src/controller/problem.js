@@ -9,15 +9,20 @@ const createProblem = async ({
 	approved,
 	id,
 }) => {
-	const result = await Problem.create({
-		title,
-		content,
-		createdBy: id,
-		tags,
-		difficulty,
-		approved,
-	});
-	return result;
+	try {
+		const result = await Problem.create({
+			title,
+			content,
+			createdBy: id,
+			tags,
+			difficulty,
+			approved,
+		});
+		return result;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
 };
 
 const approveProblem = async ({ problemId }) => {
@@ -52,6 +57,7 @@ const getProblem = async ({title}) => {
 		}
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 };
 

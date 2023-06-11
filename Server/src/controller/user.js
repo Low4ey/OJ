@@ -173,7 +173,8 @@ const getUserRole = async({ token }) => {
     }
     else throw new Error("No token Found")
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    throw error;
   }
 }
 

@@ -13,58 +13,6 @@ const getAccessToken = () => {
   return null;
 };
 
-const Problem = ({ problemTitle }) => {
-  const [problemData, setProblemData] = useState('');
-
-  const accessToken = getAccessToken();
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        withCredentials: true,
-      };
-
-  useEffect(() => {
-    const getProblem = () => {
-      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`,{
-        method: "GET",
-        headers: config.headers,
-        credentials: "include",
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch problem data');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setProblemData(data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-
-    getProblem();
-  }, [problemTitle]);
-
-  return (
-    <div className="problem-container">
-      <h2>Problem</h2>
-      <pre className="problem-data">Title : {problemData.title}</pre>
-      <pre className="problem-data">
-        Content :{' '}
-        <p dangerouslySetInnerHTML={{ __html: problemData.content }}></p>
-      </pre>
-      <pre className="problem-data">Difficulty : {problemData.difficulty}</pre>
-      <pre className="problem-data">Tags : {problemData.tags}</pre>
-    </div>
-  );
-};
-
 const TestCases = () => {
   const [testCases, setTestCases] = useState('');
 
@@ -99,21 +47,85 @@ const TestCases = () => {
   );
 };
 
+const Problem = ({ problemTitle }) => {
+  const [error, setError] = useState(false);
+
+  const [problemData, setProblemData] = useState('');
+
+  const accessToken = getAccessToken();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        withCredentials: true,
+      };
+
+  useEffect(() => {
+    const getProblem = () => {
+      fetch(`http://localhost:5005/api/getProblem?title=${problemTitle}`,{
+        method: "GET",
+        headers: config.headers,
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch problem data');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setProblemData(data);
+        })
+        .catch((error) => {
+          console.error(error);
+          setError(true);
+        });
+    };
+
+    getProblem();
+  }, [problemTitle]);
+
+  if(error)
+  {
+    return(<div>No such Problem</div>);
+  }
+  else{
+  return (
+    <div className="page-container">
+    <div className="problem-container">
+      <h2>Problem</h2>
+      <pre className="problem-data">Title : {problemData.title}</pre>
+      <pre className="problem-data">
+        Content :{' '}
+        <p dangerouslySetInnerHTML={{ __html: problemData.content }}></p>
+      </pre>
+      <pre className="problem-data">Difficulty : {problemData.difficulty}</pre>
+      <pre className="problem-data">Tags : {problemData.tags}</pre>
+    </div>
+    <div className="problem-code-container">
+        <CodeEditor />
+        <TestCases />
+      </div>
+      </div>
+
+  );
+  }
+};
+
+
+
 const ProblemPage = () => {
   const { problemTitle } = useParams();
 
   const convertToTitle = (str) => {
     return str.replace(/-/g, ' ');
   };
-
   return (
-    <div className="page-container">
+    
       <Problem problemTitle={convertToTitle(problemTitle)} />
-      <div className="problem-code-container">
-        <CodeEditor />
-        <TestCases />
-      </div>
-    </div>
   );
 };
 

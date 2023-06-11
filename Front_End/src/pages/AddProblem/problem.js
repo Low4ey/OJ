@@ -45,15 +45,19 @@ const EditorPage = () => {
   useEffect(() => {
     try {
       const accessToken = getAccessToken();
+      if(!accessToken) throw new Error("No token");
       fetch(`http://localhost:5005/user/getUserRole?token=${accessToken}`, {
         method: 'GET',
-        credentials: 'include',
+        // credentials: 'include',
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Error');
+          if (response.ok) {
+            return response.json();
+          } else {
+            return response.json().then((error) => {
+              throw error;
+            });
           }
-          return response.json();
         })
         .then((data) => {
           if (data === 'Admin') {
@@ -63,13 +67,15 @@ const EditorPage = () => {
           }
         })
         .catch((error) => {
-          console.error(error);
-          // TODO: Handle error
-        })
+          setError("Please Login Again");
+          // throw error;
+          // TODO: Handle error if necessary
+        });
     } catch (error) {
-      console.error(error);
+      setError("Please Login");
     }
   }, []);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -107,10 +113,16 @@ const EditorPage = () => {
         credentials: 'include',
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Submit request failed');
+          if (response.ok) {
+            return response.json();
           }
-          return response.json();
+          else 
+          {
+            return response.json().then(error => {
+              console.log(error.message);
+              throw new Error(error.message);
+            });
+          }
         })
         .then((data) => {
           console.log(data);
