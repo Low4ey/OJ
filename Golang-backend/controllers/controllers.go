@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/low4ey/OJ/Golang-backend/database"
+	"github.com/low4ey/OJ/Golang-backend/middleware"
 	"github.com/low4ey/OJ/Golang-backend/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -34,6 +35,12 @@ func Submit() gin.HandlerFunc {
 			return
 		}
 		submission.SubmitTime, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		codeOutput, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language)
+		if codeErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": codeErr.Error()})
+			return
+		}
+		submission.Status = &codeOutput
 		submission.Id = primitive.NewObjectID()
 		_, err := SubmissionCollection.InsertOne(ctx, submission)
 		if err != nil {
