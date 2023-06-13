@@ -3,7 +3,7 @@ const config = require("./src/config/config");
 const bodyParser = require("body-parser");
 const {dbConnect,corsConnect} = require("./src/service");
 const {errorMiddleware} = require("./src/middleware");
-const {userRouter, tokenRouter, problemRouter, editorialRouter, testCaseRouter}=require("./src/routes")
+const {userRouter, tokenRouter, problemRouter, editorialRouter, testCaseRouter, problemSetterRouter}=require("./src/routes")
 // const {handleUncaughtException,handleUncaughtRejection}=require("./src/utils")
 const connectApp = async () => {
 	const app = express();
@@ -14,7 +14,7 @@ const connectApp = async () => {
 	app.use(corsConnect.corsConnect());
 	//Routes
 	app.use("/user", userRouter);
-	app.use("/api",tokenRouter,problemRouter,editorialRouter,testCaseRouter);
+	app.use("/api",tokenRouter,problemRouter,editorialRouter,testCaseRouter,problemSetterRouter);
 
 	app.use(errorMiddleware);
 

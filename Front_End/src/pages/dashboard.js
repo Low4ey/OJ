@@ -2,6 +2,9 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ProblemList from "./ShowProblem/listProblem";
+import ApplyForProblemSetterButton from "../components/buttons/applyForProblemSetterButton";
+
+import { connect } from 'react-redux';
 
 
 const user = {
@@ -27,7 +30,12 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+const dashbaord = ({ isLoggedIn }) => {
+
+  if (!isLoggedIn) {
+    return (<div>Please LogIn</div>); // Don't render the signup page if the user is logged in
+  }
+
   return (
     <>
       {/*
@@ -192,9 +200,20 @@ export default function Example() {
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8"><ProblemList /></div>
+          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+            <ProblemList />
+            <ApplyForProblemSetterButton />
+            </div>
+
         </main>
       </div>
     </>
   )
-}
+};
+
+const mapStateToProps = (state) => ({
+  isLoggedIn: state.isLoggedIn,
+});
+
+export default connect(mapStateToProps)(dashbaord);
+

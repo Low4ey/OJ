@@ -8,14 +8,18 @@ import SignupPage from './components/user/SignupPage';
 import EditorPage from './pages/AddProblem/problem';
 // import ListProblemPage from './pages/ShowProblem/listProblem';
 import ProblemDashboard from "./pages/problemdashboard";
-
 import DashboardPage from "./pages/dashboard";
-
 import './tailwind.css'; // Import Tailwind CSS styles
+import { Provider } from 'react-redux';
+import store from '../src/app/store';
+
+
+
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
+  <Provider store={store}>  
   <Fragment>
     <Router>
       <Routes>
@@ -29,4 +33,5 @@ root.render(
       </Routes>
     </Router>
   </Fragment>
+  </Provider>
 );

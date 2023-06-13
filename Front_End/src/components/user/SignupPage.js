@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import DOMPurify from "dompurify";
+import { connect } from 'react-redux';
 
-const SignupPage = () => {
+const SignupPage = ({ isLoggedIn }) => {
   const [formData, setFormData] = useState({
 		userName: "",
 		firstName: "",
@@ -42,8 +43,6 @@ const SignupPage = () => {
 			return false;
 		}
 
-		// Password validation
-		// Password validation
 		// Password validation
 		const password = sanitizedFormData.userPassword;
 		if (password.length < 8) {
@@ -123,6 +122,9 @@ const SignupPage = () => {
       });
   };
 
+  if (isLoggedIn) {
+    return null; // Don't render the signup page if the user is logged in
+  }
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
@@ -191,7 +193,11 @@ const SignupPage = () => {
       </div>
     </div>
   );
-  
+
 };
 
-export default SignupPage;
+const mapStateToProps = (state) => ({
+  isLoggedIn: state.isLoggedIn,
+});
+
+export default connect(mapStateToProps)(SignupPage);

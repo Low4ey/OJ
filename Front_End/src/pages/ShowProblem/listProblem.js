@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
+import { connect } from "react-redux";
+
 
 const getAccessToken = () => {
 	const encodedToken = localStorage.getItem("accessToken");
@@ -11,7 +13,7 @@ const getAccessToken = () => {
 	return null;
 };
 
-const ProblemList = () => {
+const ProblemList = ({ isLoggedIn }) => {
 	const [problems, setProblems] = useState([]);
 	const navigate = useNavigate();
 	const [error, setError] = useState("");
@@ -19,8 +21,13 @@ const ProblemList = () => {
 
 
 	useEffect(() => {
-		fetchProblems();
-	}, []);
+		if (!isLoggedIn) {
+		  navigate("/login"); // Redirect to the login page if the user is not logged in
+		} else {
+		  fetchProblems();
+		}
+	  }, [isLoggedIn]);	
+	
 
 	const accessToken = getAccessToken();
 
@@ -92,4 +99,10 @@ if(errort) {
 
 };
 
-export default ProblemList;
+const mapStateToProps = (state) => {
+	return {
+	  isLoggedIn: state.isLoggedIn,
+	};
+  };
+  
+export default connect(mapStateToProps)(ProblemList);
