@@ -16,15 +16,6 @@ import (
 
 var SubmissionCollection *mongo.Collection = database.SubmissionData(database.Client, "Submission")
 
-type Application struct {
-	submissionCollection *mongo.Collection
-}
-
-func NewApplication(subCollection *mongo.Collection) *Application {
-	return &Application{
-		submissionCollection: subCollection,
-	}
-}
 func Submit() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
