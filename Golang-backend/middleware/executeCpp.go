@@ -1,12 +1,12 @@
 package middleware
 
 import (
-	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"os/exec"
+	"strings"
 )
 
 func RunCpp(codeBody string) (string, error) {
@@ -17,15 +17,35 @@ func RunCpp(codeBody string) (string, error) {
 
 	err = executeCppFile("./solution.cpp")
 	if err != nil {
-		return "", fmt.Errorf("failed to execute C++ file: %v", err)
+		return compileError, fmt.Errorf("failed to execute C++ file: %v", err)
 	}
 
-	output, err := runExecutable()
+	outcome, err := runExecutableWithTimeout("", "./a.out")
 	if err != nil {
-		return "", fmt.Errorf("failed to run executable: %v", err)
+		if err == context.DeadlineExceeded {
+			return timeExceeded, nil
+		} else if strings.Contains(err.Error(), "exited with status") {
+			return runtimeError, nil
+		} else if strings.Contains(err.Error(), "exceeded memory limit") {
+			return memoryExceeded, nil
+		}
+		return compileError, fmt.Errorf("failed to run executable: %v", err)
 	}
 
-	return output, nil
+	if outcome == correctAnswer {
+		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
+		if err != nil {
+			return "", fmt.Errorf("failed to compare files: %v", err)
+		}
+
+		if !isEqual {
+			return wrongAnswer, nil
+		}
+	} else {
+		return outcome, nil
+	}
+
+	return correctAnswer, nil
 }
 
 func executeCppFile(filePath string) error {
@@ -39,52 +59,4 @@ func executeCppFile(filePath string) error {
 	}
 
 	return nil
-}
-
-func runExecutable() (string, error) {
-	cmd := exec.Command("./a.out") // Execute the compiled executable
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("failed to run executable: %v\n%s", err, string(output))
-	}
-
-	return string(output), nil
-}
-
-func compareFile(file_one string, file_two string) (bool, error) {
-	f1, err := os.Open(file_one)
-	if err != nil {
-		return false, err
-	}
-	defer f1.Close()
-
-	// Open the second file
-	f2, err := os.Open(file_two)
-	if err != nil {
-		return false, err
-	}
-	defer f2.Close()
-
-	// Create a scanner to read the file line by line
-	scanner1 := bufio.NewScanner(f1)
-	scanner2 := bufio.NewScanner(f2)
-
-	// Iterate over each line and compare them
-	for scanner1.Scan() && scanner2.Scan() {
-		line1 := scanner1.Text()
-		line2 := scanner2.Text()
-
-		// Compare the lines
-		if line1 != line2 {
-			return false, nil
-		}
-	}
-
-	// Check if there are any remaining lines in either file
-	if scanner1.Scan() || scanner2.Scan() {
-		return false, nil
-	}
-
-	// Files are identical
-	return true, nil
 }

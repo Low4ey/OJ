@@ -62,7 +62,6 @@ func GetAllSub() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 			return
 		}
-
 		defer cursor.Close(ctx)
 
 		var submissions []models.Submission

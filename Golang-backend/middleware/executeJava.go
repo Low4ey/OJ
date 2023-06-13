@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
-	"os/exec"
+	"strings"
 )
 
 func RunJava(codeBody string) (string, error) {
@@ -14,44 +14,30 @@ func RunJava(codeBody string) (string, error) {
 		return "", fmt.Errorf("failed to write code to file: %v", err)
 	}
 
-	err = executeJavaFile("./Solution.java")
+	outcome, err := runExecutableWithTimeout("java", "./Solution.py")
 	if err != nil {
-		return "", fmt.Errorf("failed to execute Java file: %v", err)
+		if err == context.DeadlineExceeded {
+			return timeExceeded, nil
+		} else if strings.Contains(err.Error(), "exited with status") {
+			return runtimeError, nil
+		} else if strings.Contains(err.Error(), "exceeded memory limit") {
+			return memoryExceeded, nil
+		}
+		return compileError, fmt.Errorf("failed to run executable: %v", err)
 	}
 
-	output, err := runJavaFile()
-	if err != nil {
-		return "", fmt.Errorf("failed to run Java file: %v", err)
+	if outcome == correctAnswer {
+		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
+		if err != nil {
+			return "", fmt.Errorf("failed to compare files: %v", err)
+		}
+
+		if !isEqual {
+			return wrongAnswer, nil
+		}
+	} else {
+		return outcome, nil
 	}
 
-	return output, nil
-}
-
-func executeJavaFile(filePath string) error {
-	cmd := exec.Command("javac", filePath) // Compile the Java file using javac
-	errOutput := &bytes.Buffer{}           // Buffer to capture the error output
-	cmd.Stderr = errOutput                 // Attach the buffer to cmd.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("failed to compile Java file: %v\n%s", err, errOutput.String())
-	}
-
-	return nil
-}
-
-func runJavaFile() (string, error) {
-	cmd := exec.Command("java", "Solution") // Execute the compiled Java file
-	outputBuffer := &bytes.Buffer{}         // Buffer to capture the output
-	cmd.Stdout = outputBuffer               // Attach the buffer to cmd.Stdout
-	errOutput := &bytes.Buffer{}            // Buffer to capture the error output
-	cmd.Stderr = errOutput                  // Attach the buffer to cmd.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return "", fmt.Errorf("failed to run Java file: %v\n%s", err, errOutput.String())
-	}
-
-	output := outputBuffer.String()
-	return output, nil
+	return correctAnswer, nil
 }
