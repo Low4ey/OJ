@@ -3,6 +3,7 @@ const UserToken=require("./userToken");
 const Problem=require("./problem");
 const TestCase=require("./testCase");
 const Editorial=require("./editorial");
+const ProblemSetter=require("./problemSetter");
 
 
 module.exports={
@@ -11,4 +12,5 @@ module.exports={
     Problem,
     TestCase,
     Editorial,
+    ProblemSetter,
 }

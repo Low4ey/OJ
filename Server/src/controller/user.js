@@ -4,6 +4,7 @@ const config = require("../config/config");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
 const jwt = require("jsonwebtoken");
+const error = require("../middleware/error");
 
 
 
@@ -93,26 +94,32 @@ const updateUser = async ({ id,
   userRole,
   userInstitute,
 }) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: id },
+      {
+        userName,
+        firstName,
+        lastName,
+        userEmail,
+        userPhone,
+        userCountry,
+        userPassword,
+        userRole,
+        userInstitute,
+      }, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+    );
+    return user;
 
-  const user = await User.findOneAndUpdate(
-    { _id: id },
-    {
-      userName,
-      firstName,
-      lastName,
-      userEmail,
-      userPhone,
-      userCountry,
-      userPassword,
-      userRole,
-      userInstitute,
-    }, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
+  } catch (error) {
+    // console.log(error);
+    throw error;
   }
-  );
-  return user;
+  
 }
 
 //Delete User by ID

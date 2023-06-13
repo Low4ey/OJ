@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
+import { connect } from 'react-redux';
+import { loginSuccess } from '../../app/actions';
+
 
 export const storeAccessToken = (accessToken) => {
   const sanitizedToken = DOMPurify.sanitize(accessToken);
@@ -8,7 +11,16 @@ export const storeAccessToken = (accessToken) => {
   localStorage.setItem("accessToken", encodedToken);
 };
 
-const LoginPage = () => {
+const storeAuthState = (isLoggedIn) => {
+  localStorage.setItem('isLoggedIn', isLoggedIn);
+};
+
+const removeAuthState = () => {
+  localStorage.removeItem('isLoggedIn');
+};
+
+
+const LoginPage = ({ dispatchLoginSuccess }) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -50,8 +62,9 @@ const LoginPage = () => {
       .then((data) => {
         const { accessToken } = data;
         storeAccessToken(accessToken);
-        // console.log(data);  
-        navigate("/dashboard"); // Replace "/dashboard" with the desired redirect path
+        storeAuthState(true);
+        dispatchLoginSuccess(); 
+        navigate("/dashboard"); 
       })
       .catch((error) => {
         console.error("Login failed:", error.message);
@@ -93,4 +106,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default connect(null, { dispatchLoginSuccess: loginSuccess })(LoginPage);
