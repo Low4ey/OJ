@@ -1,4 +1,4 @@
-const config = require("../config/config");
+
 const { Problem } = require("../models");
 
 const createProblem = async ({

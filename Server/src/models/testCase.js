@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 
 const testCaseSchema = new Schema(
     {
-        content:{
+        testCase:{
+            type:String,
+            required:true,
+        },
+        output:{
             type:String,
             required:true,
         },

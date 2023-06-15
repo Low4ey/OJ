@@ -1,36 +1,45 @@
-const config = require("../config/config");
 const { TestCase } = require("../models");
 
 const createTestCase = async ({
-	content,
+	testCase,
+	output,
     userId,
-    Id,
+    problemId,
 	approved,
 }) => {
+	console.log(testCase);
+	try {
+		const result = await TestCase.create({
+			testCase,
+			output,
+			createdBy: userId,
+			problemId,
+			approved,
+		});
+		return result;
+	} catch (error) {
+		throw error
+	}
 
-	const result = await TestCase.create({
-        content,
-        createdBy: userId,
-        problemId: Id,
-        approved,
-	});
-	return result;
 };
 
 const approveTestCase = async ({ editorialId }) => {
-	const result = await TestCase.findOneAndUpdate(
-		{ _id: editorialId },
-		{
-			approved: true,
-		},
-		{
-			new: true,
-			runValidators: true,
-			useFindAndModify: false,
-		}
-	);
-	if (result) return result;
-	else throw new Error("Incorrect TestCase Id");
+	try {
+		const result = await TestCase.findOneAndUpdate(
+			{ _id: editorialId },
+			{
+				approved: true,
+			},
+			{
+				new: true,
+				runValidators: true,
+				useFindAndModify: false,
+			}
+		);
+		return result;
+	} catch (error) {
+		throw error
+	}
 };
 
 const getTestCase = async ({ id }) => {
@@ -62,6 +71,7 @@ const updateTestCase = async({
         {_id:id},
         {
             content,
+			output,
             userId,
             problemId,
 	        approved,

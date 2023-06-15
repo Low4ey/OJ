@@ -7,4 +7,6 @@ module.exports = Object.freeze({
   REFRESH_TOKEN_PRIVATE_KEY: process.env.RTPK,
   JWT_SECRET: process.env.JWT_SECRET,
   SALT: process.env.SALT,
+  REFRESH_TOKEN_EXPIRE_IN:process.env.REFRESH_TOKEN_EXPIRE_IN,
+  ACCESS_TOKEN_EXPIRE_IN:process.env.ACCESS_TOKEN_EXPIRE_IN
 });
