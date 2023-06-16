@@ -17,7 +17,7 @@ const testCaseSchema = new Schema(
         },
         approved:{
             type:Boolean,
-            default:false,
+            default:true,
         }
     }
 );

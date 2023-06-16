@@ -16,6 +16,11 @@ const createProblemSetter = async ({
 			reason,
 			appliedBy: userId,
 		});
+		if(result) 
+		{
+			const res = updateUser({id:userId, userRole:"AppliedProblemSetter" });
+		}
+		else throw new Error("Unable to update");
 
 		return result;
 	} catch (error) {

@@ -41,9 +41,9 @@ const userSchema = new Schema(
             unique: false
         },
         userRole:{
-            type: String,
+            type: Number,
             required: false,
-            default:"User",
+            default: 0,
         },
         userInstitute:{
             type: String,

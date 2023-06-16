@@ -44,10 +44,10 @@ const ApplyForProblemSetterButton = () => {
 
   const validateForm = () => {
 		if (
-			!sanitizedFormData.codingLanguage ||
+			!sanitizedFormData.codingLang ||
       !sanitizedFormData.occupation ||
 			!sanitizedFormData.experience ||
-			!sanitizedFormData.reasons
+			!sanitizedFormData.reason
 		) {
 			setError("Please fill in all the fields.");
 			return false;
@@ -129,7 +129,7 @@ const ApplyForProblemSetterButton = () => {
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">Application Form</h3>
                   <div className="mt-2">
-                  {/* {error && <p className="text-red-500 mb-2">{error}</p>} */}
+                  {error && <p className="text-red-500 mb-2">{error}</p>}
                     <form onSubmit={handleSubmit}>
                       <div>
                         <label htmlFor="language" className="block">
