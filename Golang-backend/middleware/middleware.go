@@ -1,16 +1,20 @@
 package middleware
 
-import "fmt"
+import (
+	"fmt"
 
-func ExecuteCode(codeBody string, language string) (string, error) {
+	"github.com/low4ey/OJ/Golang-backend/models"
+)
+
+func ExecuteCode(codeBody string, language string, testCases []models.TestCase) (int, string, error) {
 	switch language {
 	case "C++":
-		return RunCpp(codeBody)
+		return RunCpp(codeBody, testCases)
 	case "Python":
-		return RunPython(codeBody)
+		return RunPython(codeBody, testCases)
 	case "Java":
-		return RunJava(codeBody)
+		return RunJava(codeBody, testCases)
 	default:
-		return "", fmt.Errorf("unsupported language: %s", language)
+		return -1, "", fmt.Errorf("unsupported language: %s", language)
 	}
 }

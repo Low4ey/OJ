@@ -1,43 +1,70 @@
 package middleware
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
+	"os/exec"
 	"strings"
+	"syscall"
+
+	"github.com/low4ey/OJ/Golang-backend/models"
 )
 
-func RunJava(codeBody string) (string, error) {
-	// Write the code to a Java file
+func RunJava(codeBody string, testcases []models.TestCase) (int, string, error) {
 	err := ioutil.WriteFile("./Solution.java", []byte(codeBody), 0644)
 	if err != nil {
-		return "", fmt.Errorf("failed to write code to file: %v", err)
+		return -1, "", fmt.Errorf("failed to write code to file: %v", err)
 	}
 
-	outcome, err := runExecutableWithTimeout("java", "./Solution.py")
+	compErr := compileJava("./Solution.java")
+	if compErr != nil {
+		return -1, "", fmt.Errorf("failed to compile Java code: %v", compErr)
+	}
+	outcome, err := runExecutableWithTimeout("java", "./Solution.java", testcases)
 	if err != nil {
 		if err == context.DeadlineExceeded {
-			return timeExceeded, nil
+			return outcome, timeExceeded, nil
 		} else if strings.Contains(err.Error(), "exited with status") {
-			return runtimeError, nil
+			return outcome, runtimeError, nil
 		} else if strings.Contains(err.Error(), "exceeded memory limit") {
-			return memoryExceeded, nil
+			return outcome, memoryExceeded, nil
 		}
-		return compileError, fmt.Errorf("failed to run executable: %v", err)
+		return outcome, runtimeError, fmt.Errorf("failed to run Java code: %v", err)
 	}
 
-	if outcome == correctAnswer {
-		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
-		if err != nil {
-			return "", fmt.Errorf("failed to compare files: %v", err)
-		}
-
-		if !isEqual {
-			return wrongAnswer, nil
-		}
-	} else {
-		return outcome, nil
+	if outcome == -1 {
+		return -1, "", fmt.Errorf("no testcases executed during runtime")
 	}
 
-	return correctAnswer, nil
+	isEqual, err := compareFile("./output.txt", "./expected_output.txt")
+	if err != nil {
+		return outcome, "", fmt.Errorf("failed to compare files: %v", err)
+	}
+
+	if !isEqual {
+		return outcome, wrongAnswer, nil
+	}
+
+	return outcome, correctAnswer, nil
+}
+
+func compileJava(fileAddress string) error {
+	cmd := exec.Command("javac", fileAddress)
+
+	cmd.Stdout = &bytes.Buffer{}
+	cmd.Stderr = &bytes.Buffer{}
+
+	err := cmd.Run()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				return fmt.Errorf("javac exited with status: %d", status.ExitStatus())
+			}
+		}
+		return fmt.Errorf("failed to compile Java code: %v", err)
+	}
+
+	return nil
 }

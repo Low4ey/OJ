@@ -7,45 +7,45 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"strings"
+
+	"github.com/low4ey/OJ/Golang-backend/models"
 )
 
-func RunCpp(codeBody string) (string, error) {
+func RunCpp(codeBody string, testcases []models.TestCase) (int, string, error) {
 	err := ioutil.WriteFile("./solution.cpp", []byte(codeBody), 0644)
 	if err != nil {
-		return "", fmt.Errorf("failed to write code to file: %v", err)
+		return -1, "", fmt.Errorf("failed to write code to file: %v", err)
 	}
 
 	err = executeCppFile("./solution.cpp")
 	if err != nil {
-		return compileError, fmt.Errorf("failed to execute C++ file: %v", err)
+		return -1, compileError, fmt.Errorf("failed to execute C++ file: %v", err)
 	}
 
-	outcome, err := runExecutableWithTimeout("", "./a.out")
+	outcome, err := runExecutableWithTimeout("", "./a.out", testcases)
 	if err != nil {
 		if err == context.DeadlineExceeded {
-			return timeExceeded, nil
+			return outcome, timeExceeded, nil
 		} else if strings.Contains(err.Error(), "exited with status") {
-			return runtimeError, nil
+			return outcome, runtimeError, nil
 		} else if strings.Contains(err.Error(), "exceeded memory limit") {
-			return memoryExceeded, nil
+			return outcome, memoryExceeded, nil
 		}
-		return compileError, fmt.Errorf("failed to run executable: %v", err)
+		return outcome, compileError, fmt.Errorf("failed to run executable: %v", err)
 	}
 
-	if outcome == correctAnswer {
+	if outcome == len(testcases) {
 		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
 		if err != nil {
-			return "", fmt.Errorf("failed to compare files: %v", err)
+			return outcome, "", fmt.Errorf("failed to compare files: %v", err)
 		}
 
 		if !isEqual {
-			return wrongAnswer, nil
+			return outcome, wrongAnswer, nil
 		}
-	} else {
-		return outcome, nil
 	}
 
-	return correctAnswer, nil
+	return outcome, correctAnswer, nil
 }
 
 func executeCppFile(filePath string) error {

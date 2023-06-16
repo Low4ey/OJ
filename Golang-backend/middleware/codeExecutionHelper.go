@@ -7,8 +7,11 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/low4ey/OJ/Golang-backend/models"
 )
 
 const (
@@ -71,7 +74,7 @@ func compareFile(fileOne string, fileTwo string) (bool, error) {
 	return true, nil
 }
 
-func runExecutableWithTimeout(compiler string, fileAddress string) (string, error) {
+func runExecutableWithTimeout(compiler string, fileAddress string, testCases []models.TestCase) (int, error) {
 	var cmd *exec.Cmd
 
 	if compiler != "" {
@@ -85,37 +88,62 @@ func runExecutableWithTimeout(compiler string, fileAddress string) (string, erro
 
 	cmd.Stdout = &bytes.Buffer{}
 	cmd.Stderr = &bytes.Buffer{}
+	cmd.Stdin = nil // Clear the default standard input
 
 	err := cmd.Start()
 	if err != nil {
-		return "", fmt.Errorf("failed to start executable: %v", err)
+		return -1, fmt.Errorf("failed to start executable: %v", err)
 	}
 
+	outputFile, err := os.Create("output.txt")
+	if err != nil {
+		return -1, fmt.Errorf("failed to create output file: %v", err)
+	}
+	defer outputFile.Close()
+
+	lastExecutedIndex := -1
+
 	done := make(chan error, 1)
+
 	go func() {
-		done <- cmd.Wait()
+		for i, tc := range testCases {
+			input := ""
+			if tc.Testcase != nil {
+				input = *tc.Testcase
+			}
+			cmd.Stdin = strings.NewReader(input) // Set the current input
+			err := cmd.Wait()
+			if err != nil {
+				if exitErr, ok := err.(*exec.ExitError); ok {
+					if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+						if status.Signaled() && status.Signal() == syscall.SIGXCPU {
+							break
+						}
+						if status.Signaled() && status.Signal() == syscall.SIGSEGV {
+							break
+						}
+					}
+				}
+				break
+			}
+
+			output := cmd.Stdout.(*bytes.Buffer).String()
+			outputFile.WriteString(output + "\n")
+			lastExecutedIndex = i
+		}
+
+		done <- nil
 	}()
 
 	select {
 	case <-ctx.Done():
 		killProcessGroup(cmd)
-		return "", ctx.Err()
+		return lastExecutedIndex, ctx.Err()
 	case err := <-done:
 		if err != nil {
-			if exitErr, ok := err.(*exec.ExitError); ok {
-				if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
-					if status.Signaled() && status.Signal() == syscall.SIGXCPU {
-						return timeExceeded, nil
-					}
-					if status.Signaled() && status.Signal() == syscall.SIGSEGV {
-						return memoryExceeded, nil
-					}
-				}
-			}
-			return "", fmt.Errorf("failed to run executable: %v", err)
+			return lastExecutedIndex, fmt.Errorf("execution error: %v", err)
 		}
 	}
 
-	output := cmd.Stdout.(*bytes.Buffer).String()
-	return output, nil
+	return lastExecutedIndex, nil
 }

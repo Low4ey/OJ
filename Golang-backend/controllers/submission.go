@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -25,13 +26,20 @@ func Submit() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		testcases, testCaserr := getTestCases("localhost:8008/api/getTestCase/" + *submission.QuestionId)
+		if testCaserr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})
+			return
+		}
+		fmt.Println(testcases)
 		submission.SubmitTime, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		codeOutput, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language)
+		outcome, status, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language, testcases)
 		if codeErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": codeErr.Error()})
 			return
 		}
-		submission.Status = &codeOutput
+		submission.Status = &status
+		submission.LastExecutedIndex = outcome
 		submission.Id = primitive.NewObjectID()
 		_, err := SubmissionCollection.InsertOne(ctx, submission)
 		if err != nil {
