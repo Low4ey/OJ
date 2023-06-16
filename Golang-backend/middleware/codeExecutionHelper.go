@@ -147,3 +147,20 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 
 	return lastExecutedIndex, nil
 }
+func WriteOutputToFile(testCases []models.TestCase) error {
+	file, err := os.Create("./expected_output.txt")
+	if err != nil {
+		return fmt.Errorf("failed to create file: %v", err)
+	}
+	defer file.Close()
+
+	for _, tc := range testCases {
+		if tc.Output != nil {
+			_, err := file.WriteString(*tc.Output + "\n")
+			if err != nil {
+				return fmt.Errorf("failed to write output to file: %v", err)
+			}
+		}
+	}
+	return nil
+}

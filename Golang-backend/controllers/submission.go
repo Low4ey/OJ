@@ -31,6 +31,12 @@ func Submit() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})
 			return
 		}
+		if err := middleware.WriteOutputToFile(testcases); err != nil {
+			if testCaserr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})
+				return
+			}
+		}
 		fmt.Println(testcases)
 		submission.SubmitTime, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		outcome, status, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language, testcases)
