@@ -9,15 +9,20 @@ const createProblem = async ({
 	approved,
 	id,
 }) => {
-	const result = await Problem.create({
-		title,
-		content,
-		createdBy: id,
-		tags,
-		difficulty,
-		approved,
-	});
-	return result;
+	try {
+		const result = await Problem.create({
+			title,
+			content,
+			createdBy: id,
+			tags,
+			difficulty,
+			approved,
+		});
+		return result;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
 };
 
 const approveProblem = async ({ problemId }) => {
@@ -39,19 +44,21 @@ const approveProblem = async ({ problemId }) => {
 const getProblem = async ({title}) => {
 	try {
 		if (title) {
-			const result1 = await Problem.findOne({ title:title});
+			const result1 = await Problem.findOne({$and: [{title: title},{ approved: true }]});
 
 			if (!result1) {
 				throw new Error("Problem not found");
 			}
 			return result1;
-		} else {
+		} else{
 			// throw new Error("Invalid Page");
-			const allProblems = await Problem.find();
+			const allProblems = await Problem.find({approved:true});
 			return allProblems;
 		}
+
 	} catch (error) {
 		console.log(error);
+		throw error;
 	}
 };
 

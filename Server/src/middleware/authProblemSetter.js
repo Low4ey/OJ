@@ -24,8 +24,8 @@ const authProblemSetter = async (req, res, next) => {
         }
       } catch (error) {
         res.status(401);
-        console.log(error);
-        throw new Error("Not authorized here");
+        // console.log(error);
+        throw new Error(error);
       }
     } else {
       res.status(401);

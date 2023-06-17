@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
+import { connect } from "react-redux";
 
 
 const getAccessToken = () => {
@@ -12,13 +13,21 @@ const getAccessToken = () => {
 	return null;
 };
 
-const ProblemList = () => {
+const ProblemList = ({ isLoggedIn }) => {
 	const [problems, setProblems] = useState([]);
 	const navigate = useNavigate();
+	const [error, setError] = useState("");
+	const [errort, setErrorT ] = useState(false);
+
 
 	useEffect(() => {
-		fetchProblems();
-	}, []);
+		if (!isLoggedIn) {
+		  navigate("/login"); // Redirect to the login page if the user is not logged in
+		} else {
+		  fetchProblems();
+		}
+	  }, [isLoggedIn]);	
+	
 
 	const accessToken = getAccessToken();
 
@@ -32,7 +41,7 @@ const ProblemList = () => {
 	};
 
 	const fetchProblems = () => {
-		fetch("http://localhost:5005/api/getProblem", {
+		fetch("http://localhost:5005/api/getProblem?approved=true", {
 			method: "GET",
 			headers: config.headers,
 			credentials: "include",
@@ -40,16 +49,17 @@ const ProblemList = () => {
 			.then((response) => {
 				if (response.ok) {
 					return response.json();
-				} else if (response.status === 401) {
-					navigate(`/login`);
-					// navigate(`/dashboard/DashboardPage`) // For Testing
 				} else {
-					throw new Error("Error: " + response.status);
+					return response.json().then((error) => {
+						throw new Error(error.message);
+					});
 				}
 			})
 			.then((data) => setProblems(data))
 			.catch((error) => {
-				console.error("Error fetching problems:", error);
+				console.log(error);
+				setError(`${error}`);
+				setErrorT(true);
 			});
 	};
 
@@ -61,6 +71,11 @@ const ProblemList = () => {
 		navigate(`/dashboard/${problemTitle}`);
 	};
 
+if(errort) {
+	return (
+		<div>{error}</div>
+	)
+}
 	return (
 		<div className="flex">
 			<div className="w-1/3 bg-gray-200 p-4">
@@ -81,6 +96,13 @@ const ProblemList = () => {
 			</div>
 		</div>
 	);
+
 };
 
-export default ProblemList;
+const mapStateToProps = (state) => {
+	return {
+	  isLoggedIn: state.isLoggedIn,
+	};
+  };
+  
+export default connect(mapStateToProps)(ProblemList);
