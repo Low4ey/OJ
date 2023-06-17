@@ -38,6 +38,5 @@ func getTestCases(url string) ([]models.TestCase, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error parsing JSON: %v", err)
 	}
-
 	return testCases, nil
 }

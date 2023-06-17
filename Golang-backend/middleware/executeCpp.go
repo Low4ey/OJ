@@ -33,8 +33,7 @@ func RunCpp(codeBody string, testcases []models.TestCase) (int, string, error) {
 		}
 		return outcome, compileError, fmt.Errorf("failed to run executable: %v", err)
 	}
-
-	if outcome == len(testcases) {
+	if outcome == len(testcases)-1 {
 		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
 		if err != nil {
 			return outcome, "", fmt.Errorf("failed to compare files: %v", err)
@@ -44,7 +43,6 @@ func RunCpp(codeBody string, testcases []models.TestCase) (int, string, error) {
 			return outcome, wrongAnswer, nil
 		}
 	}
-
 	return outcome, correctAnswer, nil
 }
 

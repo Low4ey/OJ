@@ -44,7 +44,7 @@ const approveTestCase = async ({ editorialId }) => {
 
 const getTestCase = async ({ id }) => {
 	try { 
-		const result = await TestCase.findOne({ problemId: id });
+		const result = await TestCase.find({ problemId: id });
 		if (!result) {
 			throw new Error("TestCase not found");
 		}

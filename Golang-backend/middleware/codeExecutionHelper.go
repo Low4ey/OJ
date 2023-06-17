@@ -59,10 +59,10 @@ func compareFile(fileOne string, fileTwo string) (bool, error) {
 	scanner2 := bufio.NewScanner(f2)
 
 	for scanner1.Scan() && scanner2.Scan() {
-		line1 := scanner1.Text()
-		line2 := scanner2.Text()
+		line1 := strings.TrimSpace(scanner1.Text())
+		line2 := strings.TrimSpace(scanner2.Text())
 
-		if line1 != line2 {
+		if strings.ToLower(line1) != strings.ToLower(line2) {
 			return false, nil
 		}
 	}
@@ -111,23 +111,29 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 			if tc.Testcase != nil {
 				input = *tc.Testcase
 			}
-			cmd.Stdin = strings.NewReader(input) // Set the current input
-			err := cmd.Wait()
+
+			cmd = exec.CommandContext(ctx, fileAddress) // Re-create the command with the updated context
+			cmd.Stdin = strings.NewReader(input)        // Set the current input
+
+			outputBuf := &bytes.Buffer{}
+			cmd.Stdout = outputBuf
+			cmd.Stderr = &bytes.Buffer{} // Capture standard error, if needed
+
+			err := cmd.Run()
 			if err != nil {
 				if exitErr, ok := err.(*exec.ExitError); ok {
 					if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
-						if status.Signaled() && status.Signal() == syscall.SIGXCPU {
-							break
-						}
-						if status.Signaled() && status.Signal() == syscall.SIGSEGV {
-							break
+						if status.Signaled() && (status.Signal() == syscall.SIGXCPU || status.Signal() == syscall.SIGSEGV) {
+							done <- fmt.Errorf("execution error: %v", err)
+							return
 						}
 					}
 				}
-				break
+				done <- fmt.Errorf("execution error: %v", err)
+				return
 			}
 
-			output := cmd.Stdout.(*bytes.Buffer).String()
+			output := outputBuf.String()
 			outputFile.WriteString(output + "\n")
 			lastExecutedIndex = i
 		}
@@ -141,12 +147,13 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 		return lastExecutedIndex, ctx.Err()
 	case err := <-done:
 		if err != nil {
-			return lastExecutedIndex, fmt.Errorf("execution error: %v", err)
+			return lastExecutedIndex, err
 		}
 	}
 
 	return lastExecutedIndex, nil
 }
+
 func WriteOutputToFile(testCases []models.TestCase) error {
 	file, err := os.Create("./expected_output.txt")
 	if err != nil {
