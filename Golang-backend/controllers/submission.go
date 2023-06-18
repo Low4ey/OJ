@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,38 +17,47 @@ import (
 
 var SubmissionCollection *mongo.Collection = database.SubmissionData(database.Client, "Submission")
 
-type Application struct {
-	submissionCollection *mongo.Collection
-}
-
-func NewApplication(subCollection *mongo.Collection) *Application {
-	return &Application{
-		submissionCollection: subCollection,
-	}
-}
 func Submit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 1000*time.Second)
 		defer cancel()
+
 		var submission models.Submission
 		if err := c.BindJSON(&submission); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		submission.SubmitTime, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		codeOutput, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language)
+
+		testcases, testCaserr := getTestCases("http://localhost:5005/api/getTestCase/" + *submission.QuestionId)
+		if testCaserr != nil {
+			fmt.Println("Error in testcase route")
+			c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})
+			return
+		}
+
+		if err := middleware.WriteOutputToFile(testcases); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		submission.SubmitTime = time.Now()
+
+		outcome, status, codeErr := middleware.ExecuteCode(*submission.Code, *submission.Language, testcases)
 		if codeErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": codeErr.Error()})
 			return
 		}
-		submission.Status = &codeOutput
+		fmt.Println(outcome, " ", status)
+		submission.Status = &status
+		submission.LastExecutedIndex = outcome
 		submission.Id = primitive.NewObjectID()
+
 		_, err := SubmissionCollection.InsertOne(ctx, submission)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something bad happened"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert submission"})
 			return
 		}
-		defer cancel()
+
 		c.JSON(http.StatusCreated, gin.H{"data": submission})
 	}
 }

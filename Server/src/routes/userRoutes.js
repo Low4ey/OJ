@@ -1,7 +1,7 @@
 const express = require("express")
 const {userController} = require("../controller");
 const {ErrorHandler} = require("../utils");
-const { authUser } = require("../middleware");
+const { authUser, authAdmin } = require("../middleware");
 const router = express.Router();
 
 router.post("/signup" , async(req,res,next)=>{
@@ -49,7 +49,7 @@ router.delete("/deleteUser/",authUser, async(req,res,next)=>{
     }
 })
 
-router.get("/getUser" , async(req,res,next)=>{
+router.get("/getUser" ,authAdmin, async(req,res,next)=>{
 
     try {
         const result = await userController.getUserData(req.query);

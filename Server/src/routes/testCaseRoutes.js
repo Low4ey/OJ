@@ -3,10 +3,9 @@ const {testCaseController} = require("../controller");
 const {ErrorHandler} = require("../utils");
 const router = express.Router();
 
-router.post("/createProblem" , async(req,res,next)=>{
+router.post("/createTestCase" , async(req,res,next)=>{
 
     try {
-
         const result = await testCaseController.createTestCase(req.body);
         res.json(result);
 
@@ -15,7 +14,7 @@ router.post("/createProblem" , async(req,res,next)=>{
     }
 })
 
-router.put("/updateProblem/:id" , async(req,res,next)=>{
+router.put("/updateTestCase/:id" , async(req,res,next)=>{
 
     try {
         const result = await testCaseController.updateTestCase({id:req.params['id'], ...req.body});
@@ -26,7 +25,7 @@ router.put("/updateProblem/:id" , async(req,res,next)=>{
     }
 })
 
-router.delete("/deleteProblem/:id" , async(req,res,next)=>{
+router.delete("/deleteTestCase/:id" , async(req,res,next)=>{
 
     try {
         const result = await testCaseController.deleteTestCase({id:req.params['id']});
@@ -37,17 +36,17 @@ router.delete("/deleteProblem/:id" , async(req,res,next)=>{
     }
 })
 
-router.get("/getProblem" , async(req,res,next)=>{
+router.get("/getTestCase/:quesId" , async(req,res,next)=>{
 
     try {
-        const result = await testCaseController.getTestCase(req.body);
+        const result = await testCaseController.getTestCase({id:req.params['quesId']});
         res.json(result);
 
     } catch (error) {
         next(new ErrorHandler(error))
     }
 })
-router.post("./approveTestCase",async(req,res,next)=>{
+router.post("/approveTestCase",async(req,res,next)=>{
     try{
         const result=await testCaseController.approveTestCase(req.body);
         res.json(result);

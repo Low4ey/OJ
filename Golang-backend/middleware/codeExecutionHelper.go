@@ -7,8 +7,11 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/low4ey/OJ/Golang-backend/models"
 )
 
 const (
@@ -56,10 +59,10 @@ func compareFile(fileOne string, fileTwo string) (bool, error) {
 	scanner2 := bufio.NewScanner(f2)
 
 	for scanner1.Scan() && scanner2.Scan() {
-		line1 := scanner1.Text()
-		line2 := scanner2.Text()
+		line1 := strings.TrimSpace(scanner1.Text())
+		line2 := strings.TrimSpace(scanner2.Text())
 
-		if line1 != line2 {
+		if strings.ToLower(line1) != strings.ToLower(line2) {
 			return false, nil
 		}
 	}
@@ -71,7 +74,7 @@ func compareFile(fileOne string, fileTwo string) (bool, error) {
 	return true, nil
 }
 
-func runExecutableWithTimeout(compiler string, fileAddress string) (string, error) {
+func runExecutableWithTimeout(compiler string, fileAddress string, testCases []models.TestCase) (int, error) {
 	var cmd *exec.Cmd
 
 	if compiler != "" {
@@ -85,37 +88,86 @@ func runExecutableWithTimeout(compiler string, fileAddress string) (string, erro
 
 	cmd.Stdout = &bytes.Buffer{}
 	cmd.Stderr = &bytes.Buffer{}
+	cmd.Stdin = nil // Clear the default standard input
 
 	err := cmd.Start()
 	if err != nil {
-		return "", fmt.Errorf("failed to start executable: %v", err)
+		return -1, fmt.Errorf("failed to start executable: %v", err)
 	}
 
+	outputFile, err := os.Create("output.txt")
+	if err != nil {
+		return -1, fmt.Errorf("failed to create output file: %v", err)
+	}
+	defer outputFile.Close()
+
+	lastExecutedIndex := -1
+
 	done := make(chan error, 1)
+
 	go func() {
-		done <- cmd.Wait()
+		for i, tc := range testCases {
+			input := ""
+			if tc.Testcase != nil {
+				input = *tc.Testcase
+			}
+
+			cmd = exec.CommandContext(ctx, fileAddress) // Re-create the command with the updated context
+			cmd.Stdin = strings.NewReader(input)        // Set the current input
+
+			outputBuf := &bytes.Buffer{}
+			cmd.Stdout = outputBuf
+			cmd.Stderr = &bytes.Buffer{} // Capture standard error, if needed
+
+			err := cmd.Run()
+			if err != nil {
+				if exitErr, ok := err.(*exec.ExitError); ok {
+					if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+						if status.Signaled() && (status.Signal() == syscall.SIGXCPU || status.Signal() == syscall.SIGSEGV) {
+							done <- fmt.Errorf("execution error: %v", err)
+							return
+						}
+					}
+				}
+				done <- fmt.Errorf("execution error: %v", err)
+				return
+			}
+
+			output := outputBuf.String()
+			outputFile.WriteString(output + "\n")
+			lastExecutedIndex = i
+		}
+
+		done <- nil
 	}()
 
 	select {
 	case <-ctx.Done():
 		killProcessGroup(cmd)
-		return "", ctx.Err()
+		return lastExecutedIndex, ctx.Err()
 	case err := <-done:
 		if err != nil {
-			if exitErr, ok := err.(*exec.ExitError); ok {
-				if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
-					if status.Signaled() && status.Signal() == syscall.SIGXCPU {
-						return timeExceeded, nil
-					}
-					if status.Signaled() && status.Signal() == syscall.SIGSEGV {
-						return memoryExceeded, nil
-					}
-				}
-			}
-			return "", fmt.Errorf("failed to run executable: %v", err)
+			return lastExecutedIndex, err
 		}
 	}
 
-	output := cmd.Stdout.(*bytes.Buffer).String()
-	return output, nil
+	return lastExecutedIndex, nil
+}
+
+func WriteOutputToFile(testCases []models.TestCase) error {
+	file, err := os.Create("./expected_output.txt")
+	if err != nil {
+		return fmt.Errorf("failed to create file: %v", err)
+	}
+	defer file.Close()
+
+	for _, tc := range testCases {
+		if tc.Output != nil {
+			_, err := file.WriteString(*tc.Output + "\n")
+			if err != nil {
+				return fmt.Errorf("failed to write output to file: %v", err)
+			}
+		}
+	}
+	return nil
 }

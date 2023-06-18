@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	os.Setenv("GIN_MODE", "release")
+	gin.SetMode(gin.ReleaseMode)
 	config, err := config.LoadConfig(".")
 	if err != nil {
 		fmt.Println("Environment Variable Failed Loading")

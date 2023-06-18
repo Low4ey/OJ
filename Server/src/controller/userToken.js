@@ -23,12 +23,12 @@ const generateToken = async(user) =>{
         const accessToken = jwt.sign(
             payload,
             config.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: "20m"}
+            { expiresIn: config.ACCESS_TOKEN_EXPIRE_IN}
         )
         const refreshToken = jwt.sign(
             payload,
             config.REFRESH_TOKEN_PRIVATE_KEY,
-            { expiresIn: "30d"}
+            { expiresIn: config.REFRESH_TOKEN_EXPIRE_IN}
         )
 
         const userToken = await UserToken.findOne({userId: user._id});
