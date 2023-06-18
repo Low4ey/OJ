@@ -4,13 +4,24 @@ import Man from "../../assets/man.png";
 import Navbar from "../layout/navbar";
 import Practice from "./practicePage";
 import Compete from "./competePage";
+import SignupModal from "./signupModal";
+
 
 const HomePage = () => {
 	const [activeTab, setActiveTab] = useState("home");
+	const [showSignupModal, setShowSignupModal] = useState(false);
 
 	const handleTabChange = (tab) => {
 		setActiveTab(tab);
 	};
+
+	const handleSignupClick = () => {
+		setShowSignupModal(true);
+	  };
+	
+	  const closeSignupModal = () => {
+		setShowSignupModal(false);
+	  };	
 
 	const renderContent = () => {
 		if (activeTab === "practice") {
@@ -59,11 +70,13 @@ const HomePage = () => {
 						<Navbar
 							activeTab={activeTab}
 							onTabChange={handleTabChange}
+							onSignupClick={handleSignupClick}
 						/>
 					</div>
                     {renderContent()}
 				</div>
 			</div>
+			{showSignupModal && <SignupModal closeModal={closeSignupModal} />}
 		</div>
 	);
 };
