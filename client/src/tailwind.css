@@ -1,0 +1,14 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+
+.gradient-layer {
+  background: linear-gradient(120.86deg, rgba(255, 255, 255, 0.1) 0.84%, rgba(255, 255, 255, 0.1) 100.65%);
+}
+.backdrop-filter-blur {
+  backdrop-filter: blur(13px);
+}
+
+  
