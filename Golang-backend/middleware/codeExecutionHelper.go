@@ -15,13 +15,14 @@ import (
 )
 
 const (
-	timeLimit      = 2 * time.Second   // Example time limit of 2 seconds
-	correctAnswer  = "CORRECT"         // Example correct answer
-	wrongAnswer    = "WRONG"           // Example wrong answer
-	compileError   = "COMPILE_ERROR"   // Example compile error
-	timeExceeded   = "TIME_EXCEEDED"   // Example time limit exceeded
-	memoryExceeded = "MEMORY_EXCEEDED" // Example memory limit exceeded
-	runtimeError   = "RUNTIME_ERROR"   // Example runtime error
+	timeLimit         = 2 * time.Second   // Example time limit of 2 seconds
+	correctAnswer     = "CORRECT"         // Example correct answer
+	wrongAnswer       = "WRONG"           // Example wrong answer
+	compileError      = "COMPILE_ERROR"   // Example compile error
+	timeExceeded      = "TIME_EXCEEDED"   // Example time limit exceeded
+	memoryExceeded    = "MEMORY_EXCEEDED" // Example memory limit exceeded
+	runtimeError      = "RUNTIME_ERROR"   // Example runtime error
+	segmentationFault = "SEGMENTATION_FAULT"
 )
 
 func killProcessGroup(cmd *exec.Cmd) {
@@ -83,8 +84,8 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 		cmd = exec.Command(fileAddress) // Execute the file directly without a compiler
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeLimit)
-	defer cancel()
+	executionCtx, executionCancel := context.WithTimeout(context.Background(), timeLimit)
+	defer executionCancel()
 
 	cmd.Stdout = &bytes.Buffer{}
 	cmd.Stderr = &bytes.Buffer{}
@@ -112,14 +113,16 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 				input = *tc.Testcase
 			}
 
-			cmd = exec.CommandContext(ctx, fileAddress) // Re-create the command with the updated context
-			cmd.Stdin = strings.NewReader(input)        // Set the current input
+			cmd = exec.CommandContext(executionCtx, fileAddress) // Re-create the command with the updated context
+			cmd.Stdin = strings.NewReader(input)                 // Set the current input
 
 			outputBuf := &bytes.Buffer{}
 			cmd.Stdout = outputBuf
 			cmd.Stderr = &bytes.Buffer{} // Capture standard error, if needed
+			fmt.Println("I am Here;")
 
 			err := cmd.Run()
+			fmt.Println(err)
 			if err != nil {
 				if exitErr, ok := err.(*exec.ExitError); ok {
 					if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
@@ -142,9 +145,24 @@ func runExecutableWithTimeout(compiler string, fileAddress string, testCases []m
 	}()
 
 	select {
-	case <-ctx.Done():
+	case <-executionCtx.Done():
+		if executionCtx.Err() == context.DeadlineExceeded {
+			// Handle time limit exceeded separately without shutting down the server
+			return lastExecutedIndex, executionCtx.Err()
+		}
 		killProcessGroup(cmd)
-		return lastExecutedIndex, ctx.Err()
+
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				if status.Signal() == syscall.SIGSEGV {
+					return lastExecutedIndex, fmt.Errorf("execution error: signal: segmentation fault")
+				} else if status.Signal() == syscall.SIGXFSZ {
+					return lastExecutedIndex, fmt.Errorf("execution error: memory limit exceeded")
+				}
+			}
+		}
+
+		return lastExecutedIndex, executionCtx.Err()
 	case err := <-done:
 		if err != nil {
 			return lastExecutedIndex, err
@@ -170,4 +188,22 @@ func WriteOutputToFile(testCases []models.TestCase) error {
 		}
 	}
 	return nil
+}
+
+func handleRunError(outcome int, err error) (int, string, error) {
+	if err == context.DeadlineExceeded {
+		return outcome, timeExceeded, nil
+	} else if strings.Contains(err.Error(), "exited with status") {
+		if strings.Contains(err.Error(), "exited with status 139") {
+			return outcome, segmentationFault, nil
+		} else if strings.Contains(err.Error(), "exceeded memory limit") {
+			return outcome, memoryExceeded, nil
+		}
+		return outcome, runtimeError, nil
+	} else if strings.Contains(err.Error(), "execution error: signal: segmentation fault") {
+		return outcome, segmentationFault, nil
+	} else if strings.Contains(err.Error(), "execution error: memory limit exceeded") {
+		return outcome, memoryExceeded, nil
+	}
+	return outcome, compileError, fmt.Errorf("failed to run executable: %v", err)
 }

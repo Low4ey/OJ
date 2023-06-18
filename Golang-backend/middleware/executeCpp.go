@@ -2,11 +2,9 @@ package middleware
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io/ioutil"
 	"os/exec"
-	"strings"
 
 	"github.com/low4ey/OJ/Golang-backend/models"
 )
@@ -24,15 +22,9 @@ func RunCpp(codeBody string, testcases []models.TestCase) (int, string, error) {
 
 	outcome, err := runExecutableWithTimeout("", "./a.out", testcases)
 	if err != nil {
-		if err == context.DeadlineExceeded {
-			return outcome, timeExceeded, nil
-		} else if strings.Contains(err.Error(), "exited with status") {
-			return outcome, runtimeError, nil
-		} else if strings.Contains(err.Error(), "exceeded memory limit") {
-			return outcome, memoryExceeded, nil
-		}
-		return outcome, compileError, fmt.Errorf("failed to run executable: %v", err)
+		return handleRunError(outcome, err)
 	}
+
 	if outcome == len(testcases)-1 {
 		isEqual, err := compareFile("./output.txt", "./expected_output.txt")
 		if err != nil {

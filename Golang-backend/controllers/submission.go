@@ -19,7 +19,7 @@ var SubmissionCollection *mongo.Collection = database.SubmissionData(database.Cl
 
 func Submit() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var ctx, cancel = context.WithTimeout(context.Background(), 1000*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
 		var submission models.Submission

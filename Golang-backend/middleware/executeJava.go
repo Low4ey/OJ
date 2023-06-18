@@ -2,11 +2,9 @@ package middleware
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io/ioutil"
 	"os/exec"
-	"strings"
 	"syscall"
 
 	"github.com/low4ey/OJ/Golang-backend/models"
@@ -24,14 +22,7 @@ func RunJava(codeBody string, testcases []models.TestCase) (int, string, error) 
 	}
 	outcome, err := runExecutableWithTimeout("java", "./Solution.java", testcases)
 	if err != nil {
-		if err == context.DeadlineExceeded {
-			return outcome, timeExceeded, nil
-		} else if strings.Contains(err.Error(), "exited with status") {
-			return outcome, runtimeError, nil
-		} else if strings.Contains(err.Error(), "exceeded memory limit") {
-			return outcome, memoryExceeded, nil
-		}
-		return outcome, runtimeError, fmt.Errorf("failed to run Java code: %v", err)
+		return handleRunError(outcome, err)
 	}
 
 	if outcome == -1 {
