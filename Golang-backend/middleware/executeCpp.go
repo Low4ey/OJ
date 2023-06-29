@@ -47,7 +47,7 @@ func RunCpp(codeBody string, testcases []models.TestCase) (int, string, error) {
 }
 
 func executeCppFile(filePath string) error {
-	cmd := exec.Command("clang++", filePath) // Compile the C++ file using g++
+	cmd := exec.Command("g++", filePath) // Compile the C++ file using g++
 	errOutput := &bytes.Buffer{}             // Buffer to capture the error output
 	cmd.Stderr = errOutput                   // Attach the buffer to cmd.Stderr
 
