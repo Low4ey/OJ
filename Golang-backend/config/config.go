@@ -5,8 +5,9 @@ import (
 )
 
 type Config struct {
-	PORT   string `mapstructure:"PORT"`
-	DB_URI string `mapstructure:"DB_URI"`
+	PORT           string `mapstructure:"PORT"`
+	DB_URI         string `mapstructure:"DB_URI"`
+	JS_BACKEND_URI string `mapstructure:"JS_BACKEND_URI"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

@@ -41,7 +41,7 @@ func DBSet() *mongo.Client {
 
 var Client *mongo.Client = DBSet()
 
-func SubmissionData(client *mongo.Client, collectionName string) *mongo.Collection {
+func RecordData(client *mongo.Client, collectionName string) *mongo.Collection {
 	var collection *mongo.Collection = client.Database(DB_NAME).Collection(collectionName)
 	return collection
 }

@@ -3,22 +3,31 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/low4ey/OJ/Golang-backend/config"
 	"github.com/low4ey/OJ/Golang-backend/database"
 	"github.com/low4ey/OJ/Golang-backend/middleware"
 	"github.com/low4ey/OJ/Golang-backend/models"
+	"github.com/low4ey/OJ/Golang-backend/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var SubmissionCollection *mongo.Collection = database.SubmissionData(database.Client, "Submission")
+var SubmissionCollection *mongo.Collection = database.RecordData(database.Client, "Submission")
 
 func Submit() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		config, err := config.LoadConfig(".")
+		if err != nil {
+			fmt.Println("Environment Variable Failed Loading in DB")
+			os.Exit(1)
+		}
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
@@ -28,7 +37,7 @@ func Submit() gin.HandlerFunc {
 			return
 		}
 
-		testcases, testCaserr := getTestCases("http://localhost:5005/api/getTestCase/" + *submission.QuestionId)
+		testcases, testCaserr := getTestCases("http://" + config.JS_BACKEND_URI + "/api/getTestCase/" + *submission.QuestionId)
 		if testCaserr != nil {
 			fmt.Println("Error in testcase route")
 			c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})
@@ -52,7 +61,7 @@ func Submit() gin.HandlerFunc {
 		submission.LastExecutedIndex = outcome
 		submission.Id = primitive.NewObjectID()
 
-		_, err := SubmissionCollection.InsertOne(ctx, submission)
+		_, err = SubmissionCollection.InsertOne(ctx, submission)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert submission"})
 			return
@@ -77,6 +86,15 @@ func GetAllSub() gin.HandlerFunc {
 		var submissions []models.Submission
 		if err := cursor.All(ctx, &submissions); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+			return
+		}
+
+		filePath := "output.csv"
+
+		err = utils.CreateCSVFile(submissions, filePath)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create CSV file"})
 			return
 		}
 

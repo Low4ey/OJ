@@ -5,16 +5,16 @@ import ProblemPage from "./pages/ShowProblem/showProblem";
 import AddProblem from "./pages/AddProblem/problem"
 import ProblemList from "./pages/ShowProblem/listProblem";
 
-// import LoginPage from "./components/user/LoginPage";
+import LoginPage from "./components/user/LoginPage";
 // import SignupPage from "./components/user/SignupPage";
 const App = () => {
     return (
         <div>
             Welcome to my MERN stack application [HOME]
-            {/* <LoginPage /> */}
+            <LoginPage />
             {/* <SignupPage /> */}
             {/* <RichTextEditor /> */}
-            {/* <CodeEditor /> */}
+            <CodeEditor />
             {/* <ProblemPage /> */}
             {/* <AddProblem /> */}
             {/* <ProblemList /> */}

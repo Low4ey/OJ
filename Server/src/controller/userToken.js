@@ -56,7 +56,7 @@ const refreshAccessToken = async(refreshToken) => {
             throw new Error('Invalid Token');
         }
         const accessToken = jwt.sign({ _id: decodedToken._id }, config.ACCESS_TOKEN_PRIVATE_KEY, {
-            expiresIn: '20m',
+            expiresIn: config.ACCESS_TOKEN_EXPIRE_IN,
           });
 
         return {accessToken};

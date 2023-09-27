@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var ProblemsCollection *mongo.Collection = database.SubmissionData(database.Client, "problems")
+var ProblemsCollection *mongo.Collection = database.RecordData(database.Client, "problems")
 
 func GetProblemSolution() gin.HandlerFunc {
 	return func(c *gin.Context) {
