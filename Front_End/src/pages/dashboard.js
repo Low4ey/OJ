@@ -30,7 +30,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const dashbaord = ({ isLoggedIn }) => {
+const Dashbaord = ({ isLoggedIn }) => {
 
   if (!isLoggedIn) {
     return (<div>Please LogIn</div>); // Don't render the signup page if the user is logged in
@@ -215,5 +215,5 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.isLoggedIn,
 });
 
-export default connect(mapStateToProps)(dashbaord);
+export default connect(mapStateToProps)(Dashbaord);
 

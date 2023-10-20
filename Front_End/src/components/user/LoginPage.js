@@ -72,7 +72,7 @@ const LoginPage = ({ dispatchLoginSuccess }) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-900">
+    <div className="flex justify-center rounded-b-lg rounded-tl-lg items-center  bg-gray-900">
       <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
         <h2 className="text-3xl text-white mb-6 font-secone">Login</h2>
         <form onSubmit={handleSubmit}>

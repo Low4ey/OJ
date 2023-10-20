@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DOMPurify from "dompurify";
 import { connect } from 'react-redux';
 
-const SignupPage = ({ isLoggedIn }) => {
+const SignupPage = ({ isLoggedIn , toggleSignin}) => {
   const [formData, setFormData] = useState({
 		userName: "",
 		firstName: "",
@@ -126,7 +126,7 @@ const SignupPage = ({ isLoggedIn }) => {
     return null; // Don't render the signup page if the user is logged in
   }
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-900">
+    <div className="flex justify-center rounded-b-lg rounded-tr-lg items-center bg-gray-900">
       <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full">
         <h2 className="text-3xl text-white mb-6">Signup</h2>
         {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -189,6 +189,7 @@ const SignupPage = ({ isLoggedIn }) => {
           >
             Sign Up
           </button>
+          <button onClick={toggleSignin} className="text-white">ALready have Account?</button>
         </form>
       </div>
     </div>

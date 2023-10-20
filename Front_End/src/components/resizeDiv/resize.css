@@ -1,42 +1,56 @@
-.wrapper {
-    /* border-radius: 5px; */
-    /* width: 100vw; */
-    /* height: 100vh; */
-    /* background: teal; */
-    /* position: relative; */
-  }
-  
-  .resizeable-box {
-    position: absolute;
-    border: 2px solid red;
-    width: 50vw;
-    height:  100vh;
-    border-radius: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 15px;
-    min-height: 15px;
-  }
-  
-  .resizer {
-    position: absolute;
-    background: black;
-  }
-  
-  .rr {
+ 
+ .sidebar {
+    width: 333px;
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+    background-color: #eee;
+ }
+ 
+ .resizer {
+    width: 3px;
+    top: 0;
+    right: 0;
     cursor: col-resize;
     height: 100%;
-    right: 0;
-    top: 0;
-    width: 5px;
-  }
-  
-  .rb {
-    cursor: row-resize;
-    height: 5px;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-  }
-  
+    position: absolute;
+    background-color: #42b362;
+ }
+ 
+ .header {
+    padding: 22px 11px;
+    background-color: #fff;
+ }
+ 
+ .header h3 {
+    color: #2e2e9b;
+ }
+ 
+ .header h3, ul li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }
+ 
+ .sl {
+    padding: 11px 0px;
+    list-style: none;
+ }
+ 
+ .sl li {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 5px 11px;
+ }
+ 
+ .sl li:hover {
+    background-color: #fffbfb;
+ }
+ 
+ .rs-content {
+    flex-grow: 1;
+    padding: 3% 22px;
+    text-align: center;
+    background-color: #555;
+ }
