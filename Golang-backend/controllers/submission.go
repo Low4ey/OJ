@@ -28,7 +28,7 @@ func Submit() gin.HandlerFunc {
 			return
 		}
 
-		testcases, testCaserr := getTestCases("http://192.168.176.1:5005/api/getTestCase/" + *submission.QuestionId)
+		testcases, testCaserr := getTestCases("http://js_backend:5005/api/getTestCase/" + *submission.QuestionId)
 		if testCaserr != nil {
 			fmt.Println("Error in testcase route")
 			c.JSON(http.StatusBadRequest, gin.H{"error": testCaserr.Error()})

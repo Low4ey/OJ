@@ -1,0 +1,19 @@
+version: '3'
+services:
+  golang_backend:
+    build:
+      context: ./Golang-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8008:8008"
+
+  js_backend:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile
+    volumes:
+      - ./Server/src:/code/src
+    depends_on:
+      - golang_backend
+    ports:
+      - "5005:5005"
